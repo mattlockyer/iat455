@@ -17,6 +17,20 @@
       $('#main_content').headsmart()
     })
   </script>
+
+
+  <!-- hightlighter -->
+  <script type="text/javascript" src="highlighter/scripts/shCore.js"></script>
+  <script type="text/javascript" src="highlighter/scripts/shBrushJScript.js"></script>
+
+  <link type="text/css" rel="stylesheet" href="highlighter/styles/shCore.css"/>
+  <link type="text/css" rel="stylesheet" href="highlighter/styles/shThemeDefault.css"/>
+  <script type="text/javascript">
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.all();
+  </script>
+
+
   <title>IAT 455 - Workshop 1 - Working with Pixels - Matt Lockyer</title>
 </head>
 
@@ -53,41 +67,70 @@
 
 
       <h3>
-        <a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages">
-          <span class="octicon octicon-link"></span></a>Working with Pixels
-        </h3>
+        Code
+      </h3>
 
-        <p>
-        Some info about workshop 1
-        </p>
+      <pre class="brush: js;">
+      var foo = function() {
+        return 'bar';
+      }
+    </pre>
 
 
-      </section>
 
-      <footer>
-        <span class="ribbon-outer">
-          <span class="ribbon-inner">
-            <p>This project by <a href="https://github.com/mattlockyer">mattlockyer</a> can be found on <a href="https://github.com/mattlockyer/iat455">GitHub</a></p>
-          </span>
-          <span class="left-tail"></span>
-          <span class="right-tail"></span>
-        </span>
-        <p>Generated with <a href="http://pages.github.com">GitHub Pages</a> using Merlot</p>
-        <span class="octocat"></span>
-      </footer>
+    <h3>
+     References
+   </h3>
 
-    </div>
+   <ul>
+    <li>
+      <a href="http://falcon80.com/HTMLCanvas/PixelManipulation/getImageData.html" target="_blank">
+        Getting Pixel Data Basics
+      </a>
+    </li>
+    <li>
+      <a href="https://hacks.mozilla.org/2011/12/faster-canvas-pixel-manipulation-with-typed-arrays/" target="_blank">
+        Canvas Pixel Manipulation (2 techniques)
+      </a>
+    </li>
+    <li>
+      <a href="https://developer.mozilla.org/en/docs/Web/API/CanvasRenderingContext2D" target="_blank">
+        Canvas Context 2d Reference
+      </a>
+    </li>
+  </ul>
 
-    <script type="text/javascript">
-      var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-      document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-    </script>
-    <script type="text/javascript">
-      try {
-        var pageTracker = _gat._getTracker("UA-48997102-5");
-        pageTracker._trackPageview();
-      } catch(err) {}
-    </script>
+  <p>
 
-  </body>
-  </html>
+  </p>
+
+
+</section>
+
+<footer>
+  <span class="ribbon-outer">
+    <span class="ribbon-inner">
+      <p>This project by <a href="https://github.com/mattlockyer">mattlockyer</a> can be found on <a href="https://github.com/mattlockyer/iat455">GitHub</a></p>
+    </span>
+    <span class="left-tail"></span>
+    <span class="right-tail"></span>
+  </span>
+  <p>Generated with <a href="http://pages.github.com">GitHub Pages</a> using Merlot</p>
+  <span class="octocat"></span>
+</footer>
+
+</div>
+
+<script type="text/javascript">
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+  try {
+    var pageTracker = _gat._getTracker("UA-48997102-5");
+    pageTracker._trackPageview();
+  } catch(err) {}
+</script>
+
+</body>
+</html>
