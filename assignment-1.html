@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=640">
+
+  <link rel="stylesheet" href="stylesheets/core.css" media="screen">
+  <link rel="stylesheet" href="stylesheets/mobile.css" media="handheld, only screen and (max-device-width:640px)">
+  <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+
+  <script type="text/javascript" src="javascripts/modernizr.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="javascripts/headsmart.min.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('#main_content').headsmart()
+    })
+  </script>
+
+
+  <!-- hightlighter -->
+  <script type="text/javascript" src="highlighter/scripts/shCore.js"></script>
+  <script type="text/javascript" src="highlighter/scripts/shBrushJScript.js"></script>
+  <link type="text/css" rel="stylesheet" href="highlighter/styles/shCore.css"/>
+  <link type="text/css" rel="stylesheet" href="highlighter/styles/shThemeDefault.css"/>
+  <script type="text/javascript">
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.all();
+  </script>
+
+
+  <title>IAT 455 - Assignment 1 - Pixels and Transformations - Matt Lockyer</title>
+</head>
+
+<body>
+  <div class="shell">
+
+    <header>
+      <span class="ribbon-outer">
+        <span class="ribbon-inner">
+          <h1>Iat455</h1>
+          <h2>Assignments</h2>
+        </span>
+        <span class="left-tail"></span>
+        <span class="right-tail"></span>
+      </span>
+    </header>
+
+    <section id="downloads">
+      <span class="inner">
+        <a href="index.html" class="zip">
+          <em></em> Home
+        </a>
+        <a href="assignments.html" class="tgz">
+          <em></em> Assignments
+        </a>
+      </span>
+    </section>
+
+
+    <span class="banner-fix"></span>
+
+
+    <section id="main_content">
+
+
+      <h3>
+        Assignment 1
+      </h3>
+
+      <p>
+        This assignment is broken into 3 seperate parts. Each part should be completed as an "Effect" that is loadable and runnable using the example code presented in your workshops.
+      </p>
+
+
+
+      <h3>
+        Part 1: HSV -> RGB
+      </h3>
+
+      <p>
+        Create a scanline effect like the one shown in labs, but allow the user to control the color of the scanline using HSV controls. You will have to take the HSV values, and translate them to RGB values before you can draw the scanlines.
+      </p>
+
+      <p>
+        Use the following scales for your HSV ranges:
+      </p>
+
+      <ul>
+        <li>
+          Hue: 0 - 360
+        </li>
+        <li>
+          Saturation: 0 - 255
+        </li>
+        <li>
+          Value: 0 - 100
+        </li>
+      </ul>
+
+
+
+      <h3>
+        Part 2: Run Length Compression
+      </h3>
+
+      <p>
+        Create an effect using the run length compression algorithm. Compress the image, then recreate the image data using the compressed information.
+      </p>
+
+      <p>
+        In order for the algorithm to actually compress anything use a threshold for pixel differences and round the values to their closest match.
+      </p>
+
+      <p>
+        EX: rgba(5, 18, 61, 128) -> rgba(0, 16, 64, 128)
+      </p>
+
+      <p>
+        This way similar pixels will be grouped together and we'll see some benefit to the compression at the expense of bit depth.
+      </p>
+
+      <p>
+        You can do this on a single channel if you find it easier, but show the resulting image as black and white, and add a control that allows the user to switch which channel is being used.
+      </p>
+
+
+
+      <h3>
+        Part 3: Gaussian Blur
+      </h3>
+
+      <p>
+        Create an effect that will apply a gaussian blur to an image and allow the user to control the radius of the blur.
+      </p>
+
+    </section>
+
+    <footer>
+      <span class="ribbon-outer">
+        <span class="ribbon-inner">
+          <p>This project by <a href="https://github.com/mattlockyer">mattlockyer</a> can be found on <a href="https://github.com/mattlockyer/iat455">GitHub</a></p>
+        </span>
+        <span class="left-tail"></span>
+        <span class="right-tail"></span>
+      </span>
+      <p>Generated with <a href="http://pages.github.com">GitHub Pages</a> using Merlot</p>
+      <span class="octocat"></span>
+    </footer>
+
+  </div>
+
+  <script type="text/javascript">
+    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  </script>
+  <script type="text/javascript">
+    try {
+      var pageTracker = _gat._getTracker("UA-48997102-5");
+      pageTracker._trackPageview();
+    } catch(err) {}
+  </script>
+
+</body>
+</html>
