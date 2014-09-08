@@ -22,7 +22,6 @@
   <!-- hightlighter -->
   <script type="text/javascript" src="highlighter/scripts/shCore.js"></script>
   <script type="text/javascript" src="highlighter/scripts/shBrushJScript.js"></script>
-
   <link type="text/css" rel="stylesheet" href="highlighter/styles/shCore.css"/>
   <link type="text/css" rel="stylesheet" href="highlighter/styles/shThemeDefault.css"/>
   <script type="text/javascript">
@@ -67,16 +66,84 @@
 
 
       <h3>
-        Code
+        Working with Pixels
       </h3>
 
+
+      <p>
+        <strong>Bitmap:</strong> every bitmap image is represented as a... map of bits. 8 bits make a byte, and a byte is capable of storing values from 0-255 inclusive (or -127-128).
+      </p>
+
+      <p>
+        See this <a href="http://en.wikipedia.org/wiki/Color_depth" target="_blank">link</a> for more about bits and bytes.
+      </p>
+
+      <p>
+        Take a look at this example of a 4 pixel image:
+      </p>
+
+      <img src="http://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Bmp_format.svg/134px-Bmp_format.svg.png" alt="4 pixel image" />
+      <br />
+      <br />
+      <img src="http://falcon80.com/Images/PixelManipulation/getImageData.png" alt="pixel array image" />
+
+      <p>
+        In this image each row is 2 pixels long, and the 4th pixel is on the second row, second column, with 4 bytes per pixel. 
+        We can use this formula:
+      </p>
+
       <pre class="brush: js;">
-      var foo = function() {
-        return 'bar';
+        var bpc = 4; //bytes per pixel
+        var imgWidth = 2;
+        var pixelRow = 1;
+        var pixelCol = 1;
+        var pixel = pixelRow * bpc * imgWidth
+                    + pixelCol * bpc;
+      </pre>
+
+      <p>
+        The pixels that represent an HTML5 Canvas element are stored in the data property of an ImageData object. The data property stores these pixels as a single dimension, interleaved array of byte values for each color channel: Red, Green, Blue, Alpha (RGBA).
+      </p>
+
+      <p>
+        So if you wanted the green value of the 4th pixel, you would use the formula above to figure out this would be the value at index 13 in the array: Pixels.data[13]. Take a look at this example:
+      </p>
+
+      <pre class="brush: js;">
+        //get ImageData object using canvas 2d context
+        var imageData = context.getImageData(0, 0, context.canvas.width, context.canvas.height);
+        //get the green value of the 4th pixel
+        var pixel4greenChannel = imageData.data[13];
+      </pre>
+
+      <p>
+        You can also change the values in this array directly but you must set the new ImageData object on the canvas 2d context in order to have a visible effect. Here's an example:
+      </p>
+
+      <pre class="brush: js;">
+      //make the 4th pixel black
+      for (var i = 0; i < 3; i++) {
+        imageData.data[12 + i] = 0;
       }
+      imageData.data[15] = 255; //full opacity
+      context.setImageData(imageData, 0, 0);
     </pre>
 
+    <p>
+      In your workshops, there is a lib called media.js which includes a straightforward way to work with canvas elements and their contexts like this:
+    </p>
 
+    <pre class="brush: js;">
+      //make a new Canvas object (not element)
+      var canvas = new Canvas();
+      //properties
+      canvas.context;
+      canvas.width;
+      canvas.height;
+      //methods
+      var imageData = canvas.getImageData();
+      canvas.setImageData(imageData);
+    </pre>
 
     <h3>
      References
