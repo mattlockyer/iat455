@@ -9,9 +9,9 @@ APP.init = function() {
 	APP.setup({w:640, h:480});
 	//add effects
 	APP.effects = [];
-	APP.effects.push(new CaptureEffect(new MEDIA.Canvas()));
-	APP.effects.push(new RGBEffect(new MEDIA.Canvas()));
-	APP.effects.push(new ScanlineEffect(new MEDIA.Canvas()));
+	APP.effects.push(new CaptureEffect());
+	APP.effects.push(new RGBEffect());
+	APP.effects.push(new ScanlineEffect());
 	//setup controls
 	APP.setupControls();
 };

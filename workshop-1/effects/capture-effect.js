@@ -2,18 +2,14 @@
 
 "use strict";
 
-var CaptureEffect = function(canvas) {
+var CaptureEffect = function() {
 	var self = this;
 	//parameters
-	self.canvas = canvas;
-	self.interval = null;
+	self.canvas = new MEDIA.Canvas();
 	//controls
 	self.name = 'Capture';
 	self.controls = {
-		Toggle:APP.Effect.toggle.bind(this),
-		Freeze:function() {
-			clearInterval(self.interval);
-		}
+		//base controls added in app-utils.js
 	};
 };
 

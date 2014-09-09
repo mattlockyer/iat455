@@ -2,16 +2,14 @@
 
 "use strict";
 
-var ScanlineEffect = function(canvas) {
+var ScanlineEffect = function() {
 	var self = this;
 	//parameters
-	self.canvas = canvas;
-	self.interval = null;
+	self.canvas = new MEDIA.Canvas();
 	self.y = 0;
 	//controls
 	self.name = 'ScanlineEffect';
 	self.controls = {
-		Toggle:APP.Effect.toggle.bind(this),
 		Thickness:{
 			value:2,
 			min:1,
