@@ -160,7 +160,7 @@
       g = (pixel >> 8) & 0xff,
       b = (pixel >> 16) & 0xff;
       a = (pixel >> 24) & 0xff;
-      //put the pixels back in with alpha = 255
+      //put the pixels back in (no change)
       data32[i] = (a << 24)
                 | (b << 16)
                 | (g << 8)
