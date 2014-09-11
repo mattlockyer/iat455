@@ -7,7 +7,7 @@ var BlurEffect = function() {
 	//parameters
 	self.canvas = new MEDIA.Canvas();
 	//name
-	self.name = 'KernelEffect';
+	self.name = 'BlurEffect';
 	//controls
 	self.controls = {
 		BlurBrightness:{
@@ -58,7 +58,7 @@ BlurEffect.prototype = {
 				for (var k = low; k < high; k++) {
 					var index = i + j * w + k;
 					//clamp the index so we don't have indexOutOfBoundsError
-					index = clamp(index, 0, len);
+					//index = clamp(index, 0, len);
 					//grab the pixel
 					var pixel = data32[index];
 					//add the averages of the neighboring pixels
