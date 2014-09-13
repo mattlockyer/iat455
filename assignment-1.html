@@ -76,7 +76,7 @@
 
 
       <h3>
-        Part 1: HSV -> RGB
+        Part 1: HSV -> RGB Scanlines
       </h3>
 
       <p>
@@ -99,30 +99,26 @@
         </li>
       </ul>
 
+      <p>
+        <strong>Do not copy and paste HSV to RGB or vice versa algorithms, write your own code!</strong>
+      </p>
+
 
 
       <h3>
-        Part 2: Run Length Compression
+        Part 2: HSV Controls for Image
       </h3>
 
       <p>
-        Create an effect using the run length compression algorithm. Compress the image, then recreate the image data using the compressed information.
+        Create an effect that will allow the user to control the Hue, Saturation, and Brightness of their image.
       </p>
 
       <p>
-        In order for the algorithm to actually compress anything use a threshold for pixel differences and round the values to their closest match.
+        You will convert each pixel in the webcam image to HSV, scale the values based on the normalized slider value, and output the result to the canvas.
       </p>
-
+      
       <p>
-        EX: rgba(5, 18, 61, 128) -> rgba(0, 16, 64, 128)
-      </p>
-
-      <p>
-        This way similar pixels will be grouped together and we'll see some benefit to the compression at the expense of bit depth.
-      </p>
-
-      <p>
-        You can do this on a single channel if you find it easier, but show the resulting image as black and white, and add a control that allows the user to switch which channel is being used.
+        Use the same controls and ranges from the previous effect.
       </p>
 
 
@@ -132,7 +128,15 @@
       </h3>
 
       <p>
-        Create an effect that will apply a gaussian blur to an image and allow the user to control the radius of the blur.
+        Create an effect that will apply a gaussian blur to an image and allow the user choose between a 5x5, 7x7, or 9x9
+      </p>
+
+      <p>
+        Take a look at <a href="http://en.wikipedia.org/wiki/Gaussian_blur">this</a> sample 7x7 gaussian matrix.
+      </p>
+
+      <p>
+        <strong>Note</strong> that the result of adding up all matrix (or kernel) elements is 1.
       </p>
 
     </section>
