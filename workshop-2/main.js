@@ -11,11 +11,12 @@ APP.init = function() {
 		large:{w:640, h:480}
 	}
 	//setup app
-	APP.setup(size.medium);
+	APP.setup(size.large);
 	//add effects
 	APP.effects = [];
 	APP.effects.push(new BlurEffect());
 	APP.effects.push(new SobelEffect());
+	APP.effects.push(new TransformationEffect());
 	//setup controls
 	APP.setupControls();
 };
