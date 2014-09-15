@@ -1,0 +1,888 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>reveal.js - The HTML Presentation Framework</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<section>
+						<h1>Workshop 1</h1>
+						<div class='fragment'>
+							<p>We are going to manipulate live webcam footage by either</p>
+							<ul>
+								<li>changing the colours</li>
+								<li>drawing shapes</li>
+								<li>etc.</li>
+							</ul>
+						</div>
+					</section>
+					<section>
+						<h2>What you will need to know</h2>
+						<ul>
+							<li>Basic programming (language doesn't matter)</li>
+							<li>
+								arrays, lists, etc.
+								<ul>
+									<li>How to access elements, e.g. <code>someArray[index]</code></li>
+								</ul>
+							</li>
+							<li>
+								How to traverse an entire array
+								<ul>
+									<li>Hint: <code>for</code>-loops</li>
+								</ul>
+							</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<h2>How we will work with the web cam: a high-level view</h2>
+					<ul>
+						<li class='fragment'>
+							For every fraction of a second, our program will be capturing
+							an image from the webcam, which we will have raw access to
+						</li>
+						<li class='fragment'>
+							The raw image data will have an array of numbers, which their
+							arrangements represents pixels
+						</li>
+					</ul>
+				</section>
+
+				<section>
+
+					<section>
+						<h2>First, about pixels</h2>
+						<ul>
+							<li>Pixels are what comprise digital images</li>
+							<li>
+								They're essentially dots; when viewed from a distance gives the
+								illusion of images
+							</li>
+						</ul>
+					</section>
+
+					<section>
+						<img src='img/monalisa.png' alt='The mona lisa'>
+					</section>
+
+					<section>
+						<h2>What pixels are in the 21<sup>st</sup> century computer</h2>
+						<ul>
+							<li>
+								They are essentially colours
+								<ul>
+									<li>
+										They have three components that represent
+										<span style='color: red'>red</span>,
+										<span style='color: green'>green</span>, and
+										<span style='color: blue'>blue</span>, and occasionally a fourth, which is called alpha
+									</li>
+								</ul>
+							</li>
+							<li>
+								They are a triple of numbers (and sometimes 4-tuples), where each number varies from 0 to
+								255, e.g.
+								<ul>
+									<li>
+										<code style='color: red'>(255, 0, 0)</code> which represents
+										red
+									</li>
+									<li>
+										<code style='color: rgb(64, 224, 208)'>(64, 224, 208)</code>
+										which represents turquoise
+									</li>
+									<li>
+										<code style='color: white'>(255, 255, 255)</code> which
+										represents white
+									</li>
+								</ul>
+							</li>
+					</section>
+
+				</section>
+
+				<section>
+					<h2>Dealing with images and its pixels computationally</h2>
+					<p>
+						Images are <strong>arrays</strong> of pixels. And so, to access
+						a pixel, you access elements in an array just like any other array.
+					</p>
+					<pre class='fragment' style='font-size: 24px; margin-top: 30px'><code data-trim>
+pixels[i];
+					</code></pre>
+				</section>
+
+				<section>
+					<section>
+						<h2>We have two types of arrays that represent pixels in an image</h2>
+						<ol>
+							<li>
+								where each element represents a <em>channel</em> of a pixel
+							</li>
+							<li>
+								where each element represents an <em>entire</em> pixel
+							</li>
+						</ol>
+					</section>
+
+					<section>
+						<h2>
+							1. each element represents a <em>channel</em> of a pixel
+						</h2>
+
+						<p>Take a look at this zoomed-in 2 by 2, 4 pixel image:</p>
+
+						<p>
+							<img src='img/4pixel-image.png' alt='4 Pixel Image'>
+						</p>
+
+						<p>Here's a schema on how to access the channels of the pixels</p>
+
+						<p>
+							<img src='img/pixelarray.png' alt='How to access each pixel'>
+						</p>
+
+					</section>
+
+					<section>
+						<h2>
+							1. each element represents a <em>channel</em> of a pixel (cont'd)
+						</h2>
+						<p>
+							In this case, we will have to iterate every four elements, to get an entire pixel
+						</p>
+
+						<pre class='fragment'><code data-trim>
+for (var i = 0; i &lt; pixels; i += 4) {
+	var red   = pixels[i];
+	var green = pixels[i + 1];
+	var blue  = pixels[i + 2];
+	var alpha = pixels[i + 3];
+}
+						</code></pre>
+						<p class='fragment'>
+							Remember: each element is a numbers that has a value between
+							0 to 255
+						</p>
+					</section>
+
+					<section>
+						<h2>
+							1. each element represents a <em>channel</em> of a pixel (cont'd)
+						</h2>
+
+						<p>Let's see how we would go about dimming an entire image</p>
+						<pre class='fragment'><code data-trim>
+for (var i = 0; i &lt; pixels; i += 4) {
+	pixels[i]     = pixels[i] / 2;
+	pixels[i + 1] = pixels[i + 1] / 2;
+	pixels[i + 2] = pixels[i + 2] / 2;
+}
+						</code></pre>
+					</section>
+
+					<section>
+						<h2>
+							2. each element represents an <em>entire</em> pixel
+						</h2>
+						<p>Take a look at this zoomed-in 2 by 2, 4 pixel image:</p>
+
+						<p>
+							<img src='img/4pixel-image.png' alt='4 Pixel Image'>
+						</p>
+
+						<p>Here's a schema on how to access the pixels of our image</p>
+
+						<p>
+							<img src='img/pixelarray-whole.png' alt='How to access each pixel'>
+						</p>
+					</section>
+
+					<section>
+						<h2>
+							2. each element represents an <em>entire</em> pixel (cont'd)
+						</h2>
+						<p>
+							Because an element in the pixels array represents a single pixel,
+							we can iterate over every element, and we should have acces to
+							an entire pixel, per iteration
+						</p>
+						<pre class='fragment'><code data-trim>
+for (var i = 0; i &lt; pixels; i++) {
+	var pixel = pixels[i];
+}
+						</code></pre>
+					</section>
+
+					<section>
+						<h2>
+							2. each element represents an <em>entire</em> pixel (cont'd)
+						</h2>
+						<p>
+							You may ask how to extract the red, green, and blue (and alpha)
+							components of the pixel? We will see that a bit later...
+						</p>
+					</section>
+
+				</section>
+
+				<section>
+					<section>
+						<h2>
+							Extracting the red, green, and blue components of a pixel data
+						</h2>
+						<p>
+							Remember, there are two types of pixel arrays to represent pixels in an image:
+						</p>
+						<p>
+							<ol>
+								<li class='fragment'>
+									each element <em>only</em> represents a <em>particular</em> channel of a particular pixel
+								</li>
+								<li class='fragment'>
+									each element <em>actually</em> reperesnts an <em>entire</em> pixel
+								</li>
+							</ol>
+						</p>
+						<p style='font-size: 0.8em' class='fragment'>
+							The former already grants us direct access to each channel, while
+							the latter only gives us <strong>an object where we are required
+							to extract the channels ourselves</strong>
+						</p>
+					</section>
+					<section>
+						<h2>What is this object?</h2>
+						<ul>
+							<li class='fragment'>
+								Remember how in the first array type, every element is a number that
+								varies from 0 to 255?
+							</li>
+							<li class='fragment'>
+								Elements in the second array type are numbers as well; except, much larger. How large? It varies
+								from 0 to approximately 4 billion!
+							</li>
+							<li class='fragment'>
+								But we are not interested in that number itself; we are interested at the bit-level
+								representation
+							</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>How numbers are represented in computers</h2>
+						<p>
+							Unlike in our day-to-day numerical representation, which is in
+							decimal, computers deal with binary representation of numbers
+						</p>
+					</section>
+
+					<section>
+						<table>
+							<thead>
+								<tr>
+									<td>Decimal</td><td>Binary</td><td>Decimal</td><td>Binary</td>
+								</tr>
+							</thead>
+							<tbody style='text-align: right;'>
+								<tr>
+									<td>0</td><td>0</td><td>11</td><td>1011</td>
+								</tr>
+									<td>1</td><td>1</td><td>12</td><td>1100</td>
+								<tr>
+									<td>2</td><td>10</td><td>13</td><td>1101</td>
+								</tr>
+								<tr>
+									<td>3</td><td>11</td><td>14</td><td>1110</td>
+								</tr>
+								<tr>
+									<td>4</td><td>100</td><td>15</td><td>1111</td>
+								</tr>
+								<tr>
+									<td>5</td><td>101</td><td>16</td><td>10000</td>
+								</tr>
+								<tr>
+									<td>6</td><td>110</td><td>17</td><td>10001</td>
+								</tr>
+								<tr>
+									<td>7</td><td>111</td><td>18</td><td>10010</td>
+								</tr>
+								<tr>
+									<td>8</td><td>1000</td><td>19</td><td>10011</td>
+								</tr>
+								<tr>
+									<td>9</td><td>1001</td><td>20</td><td>10100</td>
+								</tr>
+								<tr>
+									<td>10</td><td>1010</td><td>21</td><td>10101</td>
+								</tr>
+							</tbody>
+						</table>
+					</section>
+
+					<section>
+						<h2>So back to our methods for reading pixels</h2>
+						<ul>
+							<li class='fragment'>
+								Our first representation: each element is a channel, where their values vary from 0 to 255
+							</li>
+							<li class='fragment'>
+								Our second representation: each element is an <em>entire</em> pixel, and its value varies from 0 to 4 billion
+							</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Why ?</h2>
+						<ul>
+							<li class='fragment'>
+								The first representation: each element (number) has a binary
+								digits (bit) length of 8 bits, hence why they vary from 0 to 255
+							</li>
+							<li class='fragment'>
+								The second representation: each element (also a number) has a bit
+								length of 32 bits, hence why they vary from 0 to 4 billion
+							</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>The Gist of it</h2>
+						<ul>
+							<li class='fragment'>Each element of the second representation has 32 bits of data</li>
+							<li class='fragment'>32 is a multiple of 8</li>
+							<li class='fragment'>this means we can split an element into four segments of 8 bits</li>
+							<li class='fragment'>this means that each channel is stored in their own 8-bit segment in a 32-bit pixel value</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>
+							Let's the take the colour
+							<span style='color: rgb(64, 224, 208)'>(64, 224, 208)</span>,
+							<span style='color: rgb(64, 224, 208)'>turquoise</span>
+						</h2>
+						<p>
+							In the 32-bit representation of a pixel, <span style='color: rgb(64, 224, 208)'>turquoise</span> will have the
+							following binary value:
+						</p>
+						<div class='fragment'>
+							<p>11111111<span style='color: blue'>11010000</span><span style='color: green'>11100000</span><span style='color: red'>01000000</span></p>
+							<p style='font-size: 0.5em'>
+								Note: reading from left-to-right, the channels are stored in the
+								reverse order, and so the first 8 bits represents the alpha
+								channel, the next 8 is blue, the one after is green, and finally,
+								red
+							</p>
+						</div>
+					</section>
+
+					<section>
+						<h2>Let's examine further</h2>
+
+						<p><span style='color: rgb(64, 224, 208)'>Turquoise</span>: <span>11111111</span><span style='color: blue'>11010000</span><span style='color: green'>11100000</span><span style='color: red'>01000000</span></p>
+
+						<table>
+							<thead>
+								<tr><td></td><td>red</td><td>green</td><td>blue</td><td>alpha</td></tr>
+							</thead>
+							<tbody>
+								<tr><td>Decimal</td><td>64</td><td>224</td><td>208</td><td>255</td></tr>
+								<tr><td>Binary</td><td>01000000</td><td>11100000</td><td>11010000</td><td>11111111</td></tr>
+								<tr><td>Hexadecimal</td><td>40</td><td>E0</td><td>D0</td><td>FF</td></tr>
+							</tbody>
+						</table>
+
+					</section>
+
+					<section>
+						<h2>Bitwise operation primer</h2>
+						<p>
+							When computing numbers, we have more than just the arithmetic
+							operators (such as <code>+</code>, <code>-</code>, <code>*</code>
+							<code>/</code>, <code>%</code>)
+						</p>
+						<ul>
+							<li class='fragment'>We have, what are called, bitwise operators</li>
+							<li class='fragment'>
+								They manipulate bits, instead of performing arithmetics
+							</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>
+							Bitwise operation primer: bitwise AND (<code>a &amp; b</code>)
+						</h2>
+						<p>
+							The bitwise AND returns the resulting bits of all logical AND
+							operations performed on all bits
+						</p>
+						<p>E.g. <code>16521 &amp; 40</code> yields:</p>
+						<pre><code data-trim>
+&nbsp;&nbsp;00000000000000000100000010001001
+&amp; 00000000000000000000000000101000
+----------------------------------
+  00000000000000000000000000001000
+						</code></pre>
+					</section>
+
+					<section>
+						<h2>
+							Bitwise operation primer: bitwise AND (<code>a &amp; b</code>) (cont'd)
+						</h2>
+
+						<p>
+							The bitwise AND allows us to more easily <em>extract</em> bits
+							from a binary number
+						</p>
+						<p>
+							In the case of image processing, it allows us to more easily
+							extract the component of the pixel
+						</p>
+					</section>
+
+					<section>
+						<h2>
+							Bitwise operation primer: bitwise AND (<code>a &amp; b</code>) (cont'd)
+						</h2>
+
+						<p>
+							To extract the red channel from
+							<span style='color: rgb(64, 224, 208)'>turquoise</span>, we would
+							take the big pixel value, and perform the bitwise AND with the
+							value 255, which only has the least eight significant bits set to
+							1
+						</p>
+
+						<pre><code data-trim>
+&nbsp;&nbsp;11111111110100001110000001000000
+&amp; 00000000000000000000000011111111
+----------------------------------
+  00000000000000000000000001000000
+						</code></pre>
+
+						<p>
+							And 00000000000000000000000001000000 represents the number 64 in
+							decimal
+						</p>
+					</section>
+
+					<section>
+						<h2>
+							Bitwise operation primer: bitwise shift right (<code>a &gt;&gt; b</code>)
+						</h2>
+						<p>
+							The bitwish shift right shifts the bits of the left operand by the value indicated by the right operand
+						</p>
+
+						<p>
+							The most significant bits are replaced by 0s
+						</p>
+
+						<p>E.g. <code>252 &gt;&gt; 2</code>:</p>
+						<pre><code data-trim>
+&nbsp;&nbsp; 00000000000000000000000011111100
+&gt;&gt;                                2
+-----------------------------------
+   00000000000000000000000000111111
+						</code></pre>
+					</section>
+
+					<section>
+						<h2>
+							Bitwise operation primer: bitwise shift right (<code>a &gt;&gt; b</code>) (cont'd)
+						</h2>
+
+						<p>
+							While the bitwise AND is useful for extracting the values of
+							<em>particular</em> bits, the bitwise shift left will allow us to
+							extract the actual numerical representation of those bits
+						</p>
+					</section>
+
+					<section>
+						<h2>
+							Bitwise operation primer: bitwise shift right (<code>a &gt;&gt; b</code>) (cont'd)
+						</h2>
+
+						<p>
+							Let's get the green value from <span style='color: rgb(64, 224, 208)'>turquoise</span>. But first, let's ensure that the green byte, which is the third byte, is now the fourth byte. To do this, we will bitwise shift 8 bits to the right
+						</p>
+
+						<pre><code data-trim>
+&nbsp;&nbsp; 11111111110100001110000001000000
+&gt;&gt;                                8
+-----------------------------------
+   00000000111111111101000011100000
+						</code></pre>
+					</section>
+
+					<section>
+						<h2>
+							Bitwise operation primer: bitwise shift right (<code>a &gt;&gt; b</code>) (cont'd)
+						</h2>
+
+						<p>Now, let's extract the value of the last 8 bits, with a bitwise AND</p>
+
+						<pre><code data-trim>
+&nbsp;&nbsp;00000000111111111101000011100000
+&amp; 00000000000000000000000011111111
+----------------------------------
+  00000000000000000000000011100000
+						</code></pre>
+						<p>And the value 00000000000000000000000011100000 is binary representation of the number 224 in decimal</p>
+					</section>
+
+					<section>
+						<h2>Bitwise operation primer: applying the bitwise AND, along with the bitwise shift right</h2>
+						<p>
+							Now, let's see how this would look like in JavaScript. Let's assume we have access to a variable called <code>pixel</code>, to get its components we write the following:
+						</p>
+						<pre><code data-trim>
+var red   = pixel &amp; 255;
+var green = (pixel &gt;&gt; 8)  &amp; 255;
+var blue  = (pixel &gt;&gt; 16) &amp; 255;
+var alpha = (pixel &gt;&gt; 24) &amp; 255;
+						</code></pre>
+					</section>
+
+					<section>
+						<h2>Bitwise operation primer: Bitwise shift left (<code>a &lt;&lt; b</code>)</h2>
+
+						<p>This is the opposite of the bitwise shift right; it shifts the bits left</p>
+						<p>As the bits are shifted left, the least significant bits are replaced by 0s</p>
+						<p><code>63 &lt;&lt; 2</code></p>
+
+						<pre><code data-trim>
+&nbsp;&nbsp; 00000000000000000000000000111111
+&lt;&lt;                                2
+-----------------------------------
+   00000000000000000000000011111100
+						</code></pre>
+					</section>
+
+					<section>
+						<h2>Bitwise operation primer: Bitwise shift left (<code>a &lt;&lt; b</code>) (cont'd)</h2>
+
+						<p>In the case of image processing, bitwise shift left is great for constructing pixel data from a smaller channel value</p>
+					</section>
+
+					<section>
+						<h2>Bitwise operation primer: Bitwise shift left (<code>a &lt;&lt; b</code>) (cont'd)</h2>
+
+						<p>Let's construct a <code style='color: black; background-color: white'>black</code> opaque pixel</p>
+
+						<pre><code data-trim>
+&nbsp;&nbsp; 00000000000000000000000011111111
+&lt;&lt;                               24
+-----------------------------------
+   11111111000000000000000000000000
+						</code></pre>
+					</section>
+
+					<section>
+						<h2>Bitwise operation primer: Bitwise OR (<code>a | b</code>)</h2>
+
+						<p>The bitwise OR returns the logical OR operation performed on all bits</p>
+						<p>E.g. <code>16 | 4</code></p>
+						<pre><code data-trim>
+&nbsp;&nbsp;00000000000000000000000000010000
+| 00000000000000000000000000001000
+----------------------------------
+  00000000000000000000000000011000
+						</code></pre>
+					</section>
+
+					<section>
+						<h2>Bitwise operation primer: Bitwise OR (<code>a | b</code>) (cont'd)</h2>
+						<p>In the case of image processing, the bitwise OR is great for appending values together, and then derive a pixel</p>
+					</section>
+
+					<section>
+						<h2>Bitwise operation primer: Bitwise OR (<code>a | b</code>) (cont'd)</h2>
+						<p>Let's generate the colour red (255, 0, 0). We will start out by creating the opaque colour black</p>
+						<pre><code data-trim>
+&nbsp;&nbsp; 00000000000000000000000011111111
+&lt;&lt;                               24
+-----------------------------------
+   11111111000000000000000000000000
+						</code></pre>
+					</section>
+
+					<section>
+						<h2>Bitwise operation primer: Bitwise OR (<code>a | b</code>) (cont'd)</h2>
+						<p>Then, we will bitwise OR together the colours black and the component red (we can also call it a "transparent" red)</p>
+						<pre><code data-trim>
+&nbsp;&nbsp;11111111000000000000000000000000
+| 00000000000000000000000011111111
+----------------------------------
+  11111111000000000000000011111111
+						</code></pre>
+					</section>
+
+					<section>
+						<h2>Bitwise operation primer: Applying the bitwise shift left and the bitwise or</h2>
+						<p>Now let's see how we would go about creating the colour <span style='color: red(64, 224, 208)'>turquoise (64, 224, 208)</span> from scratch, in JavaScript</p>
+						<pre><code data-trim>
+var red   = 64;
+var green = 224;
+var blue  = 208;
+var alpha = 255;
+
+var pixel = red | (green &lt;&lt; 8) | (blue &lt;&lt; 16) | (alpha &lt;&lt; 24);
+						</code></pre>
+					</section>
+
+				</section>
+
+				<section>
+					<h2>Manipulating pixels with our second method</h2>
+					<p>Now let's see what it would be like dim an image using the second method of reading and manipulating pixels</p>
+					<pre class='fragment'><code data-trim>
+for (var i = 0; i &lt; pixels; i++) {
+	var pixel = pixels[i];
+
+	var red   = pixel &amp; 255;
+	var green = (pixel >> 8) &amp; 255;
+	var blue  = (pixel >> 16) &amp; 255;
+	var alpha = (pixel >> 24) &amp; 255;
+
+	red = red / 2;
+	green = green / 2;
+	blue = blue / 2;
+
+	pixel[i] = red | (green &lt;&lt; 8) | (blue &lt;&lt; 16) | (alpha &lt;&lt; 24);
+}
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>Drawing Frame-by-Frame</h2>
+					<img src='img/draw-loop.png' alt='Draw Loop'>
+				</section>
+
+				<section>
+
+					<section>
+						<h2>Working with the code</h2>
+						<p>We rely on several libraries:</p>
+						<ul>
+							<li>dat.gui: a GUI library for changing settings live</li>
+							<li>media.js: a helper library for getting webcam data</li>
+							<li>app-utils.js: a set of helper libraries that Matt wrote just for this class</li>
+						</ul>
+						<p class='fragment'>Fortunately, they're all imported for us in a boilerplate code that Matt wrote</p>
+					</section>
+
+					<section>
+						<h2>Working with the code (cont'd)</h2>
+						<p>First, and foremost, we need to create an entry point</p>
+						<pre><code data-trim>
+//setup app
+APP.setup({w:640, h:480});
+//add effects
+APP.effects = [];
+//setup controls
+APP.setupControls();
+						</code></pre>
+					</section>
+
+					<section>
+						<h2>Working with the code (cont'd)</h2>
+						<p>Now, above our entry point let's create a basic effect</p>
+						<p class='fragment'>We will create a class for our effect. It will have only one method: <code>draw</code></p>
+						<pre class='fragment'><code data-trim>
+function BasicEffect() {
+  this.canvas = new MEDIA.Canvas();
+  this.name = 'BasicEffect';
+  this.controls = {};
+}
+
+BasicEffect.prototype = {
+
+  // This is our draw method
+  draw: function () {
+    var canvas = this.canvas;
+
+    APP.drawImage(canvas);
+  }
+
+};
+						</code></pre>
+					</section>
+
+					<section>
+						<h2>Working with the code (cont'd)</h2>
+						<p>Let's not forget to add our effect to the effects list</p>
+						<p class='fragment'>Let's go back to our entry point</p>
+						<pre class='fragment'><code data-trim>
+//setup app
+APP.setup({w:640, h:480});
+//add effects
+APP.effects = [];
+// Our draw effect added to the effects list
+APP.effects.push(new BasicEffect());
+//setup controls
+APP.setupControls();
+						</code></pre>
+					</section>
+
+					<section>
+						<h2>Working with the code (cont'd)</h2>
+						<p>Now, let's actually read the pixels</p>
+					</section>
+
+					<section>
+						<h2>Working with the code (cont'd)</h2>
+						<p>Using the "each element is a channel" array</p>
+						<pre><code data-trim>
+draw: function() {
+  var canvas = this.canvas;
+
+  // Get a snapshot of what the webcam is "seeing" right now, and draw it to
+  // our canvas.
+  APP.drawImage(canvas);
+
+  // Get the raw image data that was drawn onto the canvas
+  var img = canvas.getImageData();
+
+  // Convert the canvas data into a byte (8-bit) array
+  var pixels = img.data;
+
+  // We are not going to do anything with our pixels. Just read them and write
+  // them back for the sake of demonstration
+  for (var i = 0; i &lt; data.length; i += 4) {
+    pixels[i]     = pixels[i];
+    pixels[i + 1] = pixels[i + 1];
+    pixels[i + 2] = pixels[i + 2];
+    pixels[i + 3] = pixels[i + 3];
+  }
+
+  canvas.putImageData(img);
+}
+						</code></pre>
+					</section>
+
+					<section>
+						<h2>Working with the code (cont'd)</h2>
+						<p>Using the "each element is a pixel" array</p>
+						<pre><code data-trim>
+draw: function() {
+  var canvas = this.canvas;
+
+  // Get a snapshot of what the webcam is "seeing" right now, and draw it to
+  // our canvas.
+  APP.drawImage(canvas);
+
+  // Get the raw image data that was drawn onto the canvas
+  var img = canvas.getImageData();
+
+  // Convert the canvas data into a 4-byte (32-bit) unsigned integer array
+  var pixels = new Uint32Array(img.data.buffer);
+
+  // We are not going to do anything with our pixels. Just read them and write
+  // them back for the sake of demonstration
+  for (var i = 0; i &lt; data.length; i += 4) {
+    var pixel = pixels[i];
+
+    var red   = pixel &amp; 255;
+    var green = (pixel &gt;&gt; 8) &amp; 255;
+    var blue  = (pixel &gt;&gt; 16) &amp; 255;
+    var alpha = (pixel &gt;&gt; 24) &amp; 255;
+
+    pixels[i] =
+       red &amp; 255 |
+       ((green &amp; 255) &lt;&lt; 8) |
+       ((blue &amp; 255) &lt;&lt; 16) |
+       ((alpha &amp; 255) &lt;&lt; 24);
+  }
+
+  canvas.putImageData(img);
+}
+						</code></pre>
+					</section>
+
+				</section>
+
+				<section>
+					<h2>Now go out there and be creative</h2>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
