@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=640">
+
+  <link rel="stylesheet" href="stylesheets/core.css" media="screen">
+  <link rel="stylesheet" href="stylesheets/mobile.css" media="handheld, only screen and (max-device-width:640px)">
+  <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+
+  <script type="text/javascript" src="javascripts/modernizr.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="javascripts/headsmart.min.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('#main_content').headsmart()
+    })
+  </script>
+
+
+  <!-- hightlighter -->
+  <script type="text/javascript" src="highlighter/scripts/shCore.js"></script>
+  <script type="text/javascript" src="highlighter/scripts/shBrushJScript.js"></script>
+  <link type="text/css" rel="stylesheet" href="highlighter/styles/shCore.css"/>
+  <link type="text/css" rel="stylesheet" href="highlighter/styles/shThemeDefault.css"/>
+  <script type="text/javascript">
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.all();
+  </script>
+
+
+  <title>IAT 455 - Workshop 1 - Spatial Filters and Transformations - Matt Lockyer</title>
+</head>
+
+<body>
+  <div class="shell">
+
+    <header>
+      <span class="ribbon-outer">
+        <span class="ribbon-inner">
+          <h1>Iat455</h1>
+          <h2>Workshops</h2>
+        </span>
+        <span class="left-tail"></span>
+        <span class="right-tail"></span>
+      </span>
+    </header>
+
+    <section id="downloads">
+      <span class="inner">
+        <a href="index.html" class="zip">
+          <em></em> Home
+        </a>
+        <a href="workshops.html" class="tgz">
+          <em></em> Workshops
+        </a>
+      </span>
+    </section>
+
+
+    <span class="banner-fix"></span>
+
+
+    <section id="main_content">
+
+
+
+      <ul><li>
+        <a href="/workshop-2-slides">
+          Lab Slides (not available yet)
+        </a>
+      </li></ul>
+
+
+
+      <h3>
+        Spatial Filters
+      </h3>
+
+      <p>
+        When working with pixels we don't have to work only with the pixel we're looking at directly, we can work with pixels around the pixel we're currently looking at in the loop.
+      </p>
+
+      <p>
+        A common way to do this is to use what's called a spatial filter (or kernerl). Take a look at this image:
+      </p>
+
+      <img src="http://people.ucalgary.ca/~dasaid/CPSC535/lab6/averagingFilter1.png" alt="2 Image Kernels" />
+
+      <p>
+        Here we see 2 kernels for filtering an image. If you multiply the values for the kernel on the left you would get a 3x3 grid of 1/9 values (all would be the same). This is called a <strong>Box Blur</strong> filter.
+      </p>
+
+      <p>
+        The filter on the right resembles a <strong>Gaussian Blur</strong> filter, a blur that resembles a soft brush from photoshop (thick in the center and softer at the edges).
+      </p>
+
+      <img src="http://www.pxm-tuts.com/wp-content/uploads/pixel-tool-pixel-art/pixel-tool7.png" alt="Pixel Lines" />
+
+      <p>
+        Imagine taking a line of pixels like the ones above and applying a Box Blur filter. The pixel in the middle (black) would become lighter (influenced by the surrounding white pixels), and the neighboring pixels (white) would become darker (influenced by the middle pixel).
+      </p>
+
+      <p>
+        A gaussian blur will have the same result but maintain more of the color of the pixel in the center of the filter.
+      </p>
+
+      <p>
+      Let's take a look at how to apply a kernel:
+      </p>
+
+      <pre class="brush: js;">
+        //loop all pixels
+        for (var i = 0; i < data32; i++) {
+          //kernelX will keeps track of kernel position
+          var r = 0, g = 0, b = 0, kernelX = -1;
+          //loops -1, 0, 1
+          for (var j = -1; j < 2; j++) {
+            kernelX++;
+            var kernelY = -1;
+            //loops -1, 0, 1
+            for (var k = -1; k < 2; k++) {
+              kernelY++;
+              //get pixel @ current kernel position
+              var index = i + k * w + j;
+              var pixel = data32[index];
+              //do an operation using kernel value
+              rx += ((pixel) & 0xff)
+                    * kernel[kernelX][kernelY];
+
+              //... more operations
+
+            }
+          }
+        }
+      </pre>
+
+
+      <h3>
+        Transformations
+      </h3>
+
+      <p>
+      This should largely be a review but we will be working working with a few CSS transformations to manipulate our canvas around the screen. They are:
+      </p>
+
+      <ul>
+      <li>Translate X Y Z</li>
+      <li>Scale X Y</li>
+      <li>Rotate X Y Z</li>
+      </ul>
+
+      <p>
+      There is another factor in using CSS 3D Transformations and that is Perspective which controls how "deep" the 3D effect will be. A smaller perspective value means a deeper perspective, larger means more shallow.
+      </p>
+
+      <p>
+      You can set the transform of any html element using the following code:
+      </p>
+
+      <div class="code-wide">
+        <pre class="brush: js;">
+          //get canvas and controls
+          var canvas = this.canvas,
+          tranX = this.controls.TranslateX.value,
+          tranY = this.controls.TranslateY.value,
+          tranZ = this.controls.TranslateZ.value,
+          scaleX = this.controls.ScaleX.value,
+          scaleY = this.controls.ScaleY.value,
+          rotX = this.controls.RotateX.value,
+          rotY = this.controls.RotateY.value,
+          rotZ = this.controls.RotateZ.value,
+          perspective = this.controls.Perspective.value;
+
+          //NOTE canvas is not an html5 canvas element but a JS Object
+          //canvas property element is the actual html5 canvas element
+
+          canvas.element.style.transform = 'perspective(' + perspective + 'px) '
+          + 'translate3d(' + tranX + 'px, ' + tranY + 'px, ' + tranZ + 'px) '
+          + 'scale(' + scaleX + ', ' + scaleY + ') '
+          + 'rotateX(' + rotX + 'deg) rotateY(' + rotY + 'deg) rotateZ(' + rotZ + 'deg)';
+        </pre>
+      </div>
+
+      <p>
+      *** Only tested in Chrome (latest version)
+      </p>
+
+  <h3>
+   References
+ </h3>
+
+ <ul>
+  <li>
+    <a href="http://en.wikipedia.org/wiki/Kernel_(image_processing)" target="_blank">
+      Kernel (image processing)
+    </a>
+  </li>
+  <li>
+    <a href="http://desandro.github.io/3dtransforms/" target="_blank">
+      CSS Transforms Examples
+    </a>
+  </li>
+  <li>
+    <a href="https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Using_CSS_transforms" target="_blank">
+      CSS Transforms (perspective explained)
+    </a>
+  </li>
+  <li>
+    <a href="http://css-tricks.com/controlling-css-animations-transitions-javascript/" target="_blank">
+      Controlling CSS Animations with Javascript
+    </a>
+  </li>
+</ul>
+
+</section>
+
+<footer>
+  <span class="ribbon-outer">
+    <span class="ribbon-inner">
+      <p>This project by <a href="https://github.com/mattlockyer">mattlockyer</a> can be found on <a href="https://github.com/mattlockyer/iat455">GitHub</a></p>
+    </span>
+    <span class="left-tail"></span>
+    <span class="right-tail"></span>
+  </span>
+  <p>Generated with <a href="http://pages.github.com">GitHub Pages</a> using Merlot</p>
+  <span class="octocat"></span>
+</footer>
+
+</div>
+
+<script type="text/javascript">
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+  try {
+    var pageTracker = _gat._getTracker("UA-48997102-5");
+    pageTracker._trackPageview();
+  } catch(err) {}
+</script>
+
+</body>
+</html>
