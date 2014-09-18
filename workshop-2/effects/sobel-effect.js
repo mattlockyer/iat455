@@ -71,19 +71,20 @@ SobelEffect.prototype = {
 			var r = 0, g = 0, b = 0, cx = -1, cy = -1, rx = 0, gx = 0, bx = 0, ry = 0, gy = 0, by = 0;
 			for (var j = low; j < high; j++) {
 				cx++;
-				//if (j === 0) continue; //uncomment for basic convolve
+				if (j === 0) continue; //uncomment for basic convolve
 				cy = -1;
 				for (var k = low; k < high; k++) {
 					cy++;
-					//if (k === 0) continue; //uncomment for basic convolve
+					if (k === 0) continue; //uncomment for basic convolve
 					var index = i + k * w + j;
 					//grab the pixel
 					var pixel = data32[index];
 					//basic convolve (skip when j and k === 0)
-					//r += ((pixel) & bitMask) * kernel[cx][cy];
-					//g += ((pixel >> 8) & bitMask) * kernel[cx][cy];
-					//b += ((pixel >> 16) & bitMask) * kernel[cx][cy];
+					r += ((pixel) & bitMask) * kernel[cx][cy];
+					g += ((pixel >> 8) & bitMask) * kernel[cx][cy];
+					b += ((pixel >> 16) & bitMask) * kernel[cx][cy];
 					//convolveX
+					/*
 					rx += ((pixel) & bitMask) * kernelX[cx][cy];
 					gx += ((pixel >> 8) & bitMask) * kernelX[cx][cy];
 					bx += ((pixel >> 16) & bitMask) * kernelX[cx][cy];
@@ -91,19 +92,22 @@ SobelEffect.prototype = {
 					ry += ((pixel) & bitMask) * kernelY[cx][cy];
 					gy += ((pixel >> 8) & bitMask) * kernelY[cx][cy];
 					by += ((pixel >> 16) & bitMask) * kernelY[cx][cy];
+					*/
 				}
 			}
             //basic convolve
-            //r = r < 0 ? r * -1 : r;
-            //g = g < 0 ? g * -1 : g;
-            //b = b < 0 ? b * -1 : b;
+            r = r < 0 ? r * -1 : r;
+            g = g < 0 ? g * -1 : g;
+            b = b < 0 ? b * -1 : b;
             //convolve X and Y
+            /*
             r = Math.sqrt(rx * rx + ry * ry);
             g = Math.sqrt(gx * gx + gy * gy);
             b = Math.sqrt(bx * bx + by * by);
             r = (r > 255) ? 255 : r;
             g = (g > 255) ? 255 : g;
             b = (b > 255) ? 255 : b;
+            */
             //invert
             r = 255 - r;
             g = 255 - g;
