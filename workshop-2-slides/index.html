@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>reveal.js - The HTML Presentation Framework</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<section>
+						<h1>Workshop 2</h1>
+						<ul class='fragment'>
+							<li>convert an index into column and row indices</li>
+							<li>use the column and row values to do more than just change colours</li>
+							<li>Learn about the kernel and convolusion</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>The Workshop</h2>
+						<ul>
+							<li>In the last workshop, we focused on each pixel, individually</li>
+							<li>In this workshop, we will not only focus on a particular pixel, we will also be focusing on its neighbouring pixels</li>
+							<li>We will be using something called a "kernel" to help us achieve some cool effects</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Converting an index into column and row indices</h2>
+						
+						<pre><code data-trim>
+var col = index % width;
+var row = Math.floor(index / width);
+						</code></pre>
+
+						<p class='fragment'>
+							Sometimes, <code>col</code> (or column) and <code>row</code> are called <code>x</code> and <code>y</code>, respectively.
+						</p>
+					</section>
+
+					<section>
+						<h2>Converting column and row indices into an array index</h2>
+						<pre><code data-trim>
+var index = col + (row * width);
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Blurring</h2>
+						<p>Before we go ahead with the kernel, let's take some baby steps by first talking about blurring</p>
+						<img src='img/Mona_Lisa-blur.png' alt='Mona Lisa with and without blur'>
+					</section>
+
+					<section>
+						<h2>What blurring is</h2>
+						<p>A best way to illustrate blurring is through shadows</p>
+						<img src='img/umbra-penumbra.svg' alt='Umbra and penumbra'>
+						<p>The penumbra is a simultaneous mixture of absence of light, and the presence thereof</p>
+					</section>
+
+					<section>
+						<h2>What blurring is (cont'd)</h2>
+						<ul>
+							<li class='fragment'>similar idea for images</li>
+							<li class='fragment'>
+								blurring is an <em>intended</em> colour mixed with neighbouring light sources
+								<ul>
+									<li class='fragment'>Remember: another way think of images---that our eyes see---as being a quasi-infinite array of light sources. If they mix, the images appear blurred</li>
+								</ul>
+							</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>Applying to digital images</h2>
+						<ul>
+							<li class='fragment'>To blur an image, we iterate over every pixel, and we hollistically derive a value based on each pixel's neighbour</li>
+							<li class='fragment'>a simple way to derive such value is to simply calculate the average</li>
+							<li class='fragment'>
+								Below is a simple blur applied to the Mona Lisa's Eye
+								<p>
+									<img src='img/mona-lisa-eye.png' alt='Eye of Mona Lisa unblurred vs blurred; a close up view'>
+								</p>
+							</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>The Algorithm</h2>
+						<p>This is for a simple box blur</p>
+						<pre><code data-trim>
+var kernelDimension = 3;
+var kernelSize      = kernelDimension * kernelDimension;
+
+for (var i = 0; i &lt; pixels.length; i++) {
+  var col = index % width;
+  var row = Math.floor(index / height);
+
+  var accum = 0;
+
+  for (var x = 0; x &lt; kernelDimension; x++) {
+    for (var y = 0; y &lt; kernelDimension; y++) {
+      var lookupX = col + x - 1; if (lookupX &lt; 0) { lookupX = 0; }
+      var lookupY = row + y - 1; if (lookupY &lt; 0) { lookupY = 0; }
+      
+      var index = lookupX + (lookupY * width);
+
+      accum += pixels[index];
+    }
+  }
+
+  pixels[i] = accum / kernelSize;
+}
+						</code></pre>
+						<p class='fragment'><strong>This is just a demonstration</strong>. Actual code is different</p>
+					</section>
+
+					<section>
+						<h2>Another way to compute the pixel: multiply based on a kernel table</h2>
+						<ul>
+							<li class='fragment'>the kernel is a square matrix of numbers. It has an odd number of rows and columns</li>
+							<li class='fragment'>the pixel values are multiplied by the values in the kernel, and then added together, and the pixel is then set to their sum</li>
+							<li class='fragment'>
+								Below is an example kernel used for box blur
+								<p>
+									<pre><code data-trim>
+[ 0.111, 0.111, 0.111,
+  0.111, 0.111, 0.111,
+  0.111, 0.111, 0.111 ]
+									</code></pre>
+								</p>
+							</li>
+						</ul>
+						<p class='fragment'><small>Question: why have all the values been set to 0.111?</small></p>
+					</section>
+
+					<section>
+						<h2>The Algorithm for our kernel</h2>
+						<pre><code data-trim>
+var kernel =
+  [ 0.111, 0.111, 0.111,
+    0.111, 0.111, 0.111,
+    0.111, 0.111, 0.111 ]
+
+var kernelDimension = 3;
+var kernelSize      = kernelDimension * kernelDimension;
+
+for (var i = 0; i &lt; pixels.length; i++) {
+  var col = i % width;
+  var row = Math.floor(i / width);
+
+  var accum = 0;
+
+  for (var j = 0; j &lt; kernelSize; j++) {
+    var x = j % kernelDimension;
+    var y = Math.floor(j / kermelDimension);
+
+    var lookupX = col + x - 1; if (lookupX &lt; 0) { lookupX = 0; }
+    var lookupY = row + y - 1; if (lookupY &lt; 0) { lookupY = 0; }
+
+    var index = lookupX + (lookupY * width);
+
+    accum += pixels[index] * kernel[j];
+  }
+
+  pixels[i] = accum;
+}
+						</code></pre>
+						<p class='fragment'><strong>This is just a demonstration</strong>. Actual code is different</p>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Effects that can be achieved using the Kernel</h2>
+						<p>Sharpen</p>
+						<p><img src='img/sharpen.png'></p>
+						<p><img style='background-color: white' src='img/sharpen-kernel.png'></p>
+					</section>
+
+					<section>
+						<h2>Effects that can be achieved using the Kernel</h2>
+						<p>Box Blur</p>
+						<p><img src='img/box-blur.png'></p>
+						<p><img style='background-color: white' src='img/box-blur-kernel.png'></p>
+					</section>
+
+					<section>
+						<h2>Effects that can be achieved using the Kernel</h2>
+						<p>Gaussian Blur</p>
+						<p><img src='img/gaussian-blur.png'></p>
+						<p><img style='background-color: white' src='img/gaussian-blur-kernel.png'></p>
+					</section>
+
+					<section>
+						<h2>Effects that can be achieved using the Kernel</h2>
+						<p>Edge Detection</p>
+						<p><img src='img/edge-detection.png'></p>
+						<p><img style='background-color: white' src='img/edge-detection-kernel.png'></p>
+					</section>
+
+					<section>
+						<h2>Effects that can be achieved using the Kernel</h2>
+						<p>Edge Detection, another way</p>
+						<p><img src='img/edge-detection-2.png'></p>
+						<p><img style='background-color: white' src='img/edge-detection-2-kernel.png'></p>
+					</section>
+
+					<section>
+						<h2>Effects that can be achieved using the Kernel</h2>
+						<p>Edge Detection, yet another way</p>
+						<p><img src='img/edge-detection-3.png'></p>
+						<p><img style='background-color: white' src='img/edge-detection-3-kernel.png'></p>
+					</section>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
