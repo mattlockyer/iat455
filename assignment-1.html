@@ -116,6 +116,10 @@
       <p>
         Convert each pixel in the webcam image to HSV, scale the values based on the normalized slider value, convert back to RGB, and output the result to the canvas.
       </p>
+
+      <p>
+      <strong>NOTE:</strong> you're going to be shifting the Hue value by the value of the slider. Example: the RGB you conver to HSV for a pixel has a Hue value of 30. Your slider has a Hue value of 100. The output Hue value should be 30 + 100 = 130. You will have to deal with cases where: (slider value + input hue value) > 360. Wrap the result around to 0 (you can use the % operator).
+      </p>
       
       <p>
         Use the same controls and ranges from the previous effect.
