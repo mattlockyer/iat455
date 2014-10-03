@@ -1,0 +1,3 @@
+- 0.5 off for wrong operators
+- 0.5 off for bad code
+- Blur effect: 0.5 off for not doing the correct offset
