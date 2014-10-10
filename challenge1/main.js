@@ -30,7 +30,7 @@ function OverlayEffect() {
   this.img = new Image();
   this.img.onload = function () {
     // We are now inside a function, which is bound to our `Image` instance,
-    // and hence the `this` keyword will refere to the `Image` instance, and not
+    // and hence the `this` keyword will refer to the `Image` instance, and not
     // to the `OverflayEffect` instance.
     //
     // Do note that the code being run here is entirely asynchronous, and so the
@@ -42,19 +42,47 @@ function OverlayEffect() {
     // However, if we want to implement time-based post-processing, it would be
     // ideal to draw the image to our other canvas *at every frame*. In other
     // words, you would call `this.otherCanvas.context.drawImage` in the `draw`
-    // method, below.
+    // method, below, and **not** here.
+    //
+    // Unlike what was mentioned in the previous labs, we are going to be doing
+    // direct canvas context access, and not just through an intermediary (such
+    // `APP.drawImage`). The difference now is that we can work directly with
+    // the native HTML5 canvas API , which grants us more flexibility than just
+    // drawing the webcam image across the entire canvas, or drawing a pixels
+    // array to the canvas without anything else.
+    //
+    // The function below is going to draw the specified image (`self.img` in
+    // this case), to the other helper canvas (self.otherCanvas), and also
+    // accepts four numbers; the first two representing the position of the
+    // image, and a width and height representing the dimensions of the
+    // resulting image that will be drawn to the canvas.
     self.otherCanvas.context.drawImage(
       self.img, 0, 0, MEDIA.width, MEDIA.height
     );
-  }
+  };
   this.img.src = 'chris_hansen.jpg';
 }
 
 OverlayEffect.prototype = {
   draw: function () {
+    // All code in here is run multiple times. Of course, at the end of each
+    // time the code is called, all variables that have only been defined in
+    // this function will be thrown in the trash.
+    //
+    // If you want data persistence, you would store our data in the class, as
+    // properties.
+
     var canvas = this.canvas;
 
+    // Remember, the `APP.drawImage` function draws the *webcam*'s image, *to*
+    // the specified canvas object.
     APP.drawImage(canvas);
+
+    // In this example, we won't be drawing to our other canvas at every frame,
+    // since, we're certain that it will remain the same at every frame.
+    //
+    // However, if we do need to change the content of our other canvas, you
+    // do so here.
 
     var backgroundImage = canvas.getImageData();
     var foregroundImage = this.otherCanvas.getImageData();
@@ -74,6 +102,10 @@ OverlayEffect.prototype = {
           ((foregroundPixel >> 8 ) & 255) +
           ((foregroundPixel >> 16) & 255)
         ) / 3;
+
+      // Alternatively, we may have checked whether or not the pixel is
+      // grayscale, and *then* check its brightness. This is get rid of
+      // shadows. But in the case of our example, there aren't any.
 
       // If the foreground pixel is dark enough, then this means we can replace
       // the background pixel with the foreground pixel.
