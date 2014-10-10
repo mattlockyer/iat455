@@ -1,7 +1,7 @@
 function OverlayEffect() {
   // Do note that everything in this function (semantically called a
   // constructor) is called only once; it is when `new OverflayEffect()` is
-// evaluated, and only then.
+  // evaluated, and only then.
 
   this.canvas = new MEDIA.Canvas();
   this.name = 'Overlay';
