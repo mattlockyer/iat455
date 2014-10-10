@@ -25,7 +25,7 @@ function OverlayEffect() {
   // We initialize a new instance of an Image object, and "tell" it to load
   // Chris Hansen's image. We do so implicitly, by setting its `src` property
   // to the location of Chris Hansen's image. We will also attach an event
-  // listener, so that we know that the image has loaded, and that we are then
+  // listener, so that we know when the image has loaded, and that we are then
   // able to draw the image onto our canvas.
   this.img = new Image();
   this.img.onload = function () {
