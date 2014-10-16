@@ -63,10 +63,20 @@ function init() {
   geometry = new THREE.BoxGeometry(200, 200, 200);
 
   // Determine how our mesh is going to be drawn.
-  material = new THREE.MeshBasicMaterial({
-    color: 0xFFFFFF,
-    wireframe: true,
-    wireframeLinewidth: 2
+  // material = new THREE.MeshBasicMaterial({
+  //   color: 0xFFFFFF,
+  //   wireframe: false,
+  //   wireframeLinewidth: 2
+  // });
+  
+  // var crateTexture = THREE.ImageUtils.loadTexture('./crate.jpg');
+  // material = new THREE.MeshBasicMaterial({
+  //   map: crateTexture
+  // });
+
+  var crateTexture = THREE.ImageUtils.loadTexture('./crate.jpg');
+  material = new THREE.MeshPhongMaterial({
+    map: crateTexture
   });
 
   // Initialize our mesh.
@@ -74,6 +84,15 @@ function init() {
 
   // Add our mesh.
   scene.add(mesh);
+
+  // add subtle blue ambient lighting
+  var ambientLight = new THREE.AmbientLight(0x333333);
+  scene.add(ambientLight);
+
+  // directional lighting
+  var directionalLight = new THREE.DirectionalLight(0xffffff);
+  directionalLight.position.set(1, 1, 1).normalize();
+  scene.add(directionalLight);
 }
 
 // This is where our draw loop happens.
