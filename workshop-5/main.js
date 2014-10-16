@@ -20,6 +20,12 @@ var material;
 // will draw onto our scene.
 var mesh;
 
+// This is where we will be drawing our sky box.
+var sceneCube;
+
+// This is the camera for our cube object.
+var cameraCube;
+
 // Considering this is JavaScript, the code inside this `init` function really
 // does not need to be in here. However, it allows us to keep our code clean so
 // whatever.
@@ -35,6 +41,7 @@ function init() {
   // Set the size of our renderer (pretty much a DOM element with width and
   // height style properties set to the current window size).
   renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.autoClear = false;
   document.body.appendChild( renderer.domElement );
 
   // Initialize our object that will represent a projection matrix.
@@ -50,14 +57,22 @@ function init() {
     // This determines how close an object needs to be in order to "disappear".
     1,
     // This determines how far an object needs to be in order to "disappear".
-    1000
+    100000
+  );
+
+  cameraCube = new THREE.PerspectiveCamera(
+    60,
+    window.innerWidth / window.innerHeight,
+    1,
+    100000
   );
 
   // The position of the camera in our scene.
   camera.position.z = 500;
 
-  // Initialize a scene to draw to.
+  // Initialize a scene to draw to, for both our main scene, and the cubemap.
   scene = new THREE.Scene();
+  sceneCube = new THREE.Scene();
 
   // This is our list of vertices (not-really) that will represent a cube.
   geometry = new THREE.BoxGeometry(200, 200, 200);
@@ -75,9 +90,17 @@ function init() {
   // });
 
   var crateTexture = THREE.ImageUtils.loadTexture('./crate.jpg');
-  material = new THREE.MeshPhongMaterial({
+  var material = new THREE.MeshPhongMaterial({
     map: crateTexture
   });
+
+  // var crateTexture = THREE.ImageUtils.loadTexture('./crate.jpg');
+  // var material = new THREE.MeshPhongMaterial({
+  //   map: crateTexture,
+  //   opacity: 1,
+  //   transparent: true,
+  //   blending: THREE.AdditiveBlending,
+  // });
 
   // Initialize our mesh.
   mesh = new THREE.Mesh(geometry, material);
@@ -93,6 +116,50 @@ function init() {
   var directionalLight = new THREE.DirectionalLight(0xffffff);
   directionalLight.position.set(1, 1, 1).normalize();
   scene.add(directionalLight);
+
+  var urls = [
+    'cubemap/posx.jpg',
+    'cubemap/negx.jpg',
+    'cubemap/posy.jpg',
+    'cubemap/negy.jpg',
+    'cubemap/posz.jpg',
+    'cubemap/negz.jpg',
+  ];
+
+  var textureCube = THREE.ImageUtils.loadTextureCube(urls);
+  textureCube.format = THREE.RGBFormat;
+
+  // var cubeshader = THREE.ShaderLib['cube'];
+  // cubeshader.uniforms['tCube'].texture = cubemap;
+
+  // var cubeMaterial = new THREE.ShaderMaterial({
+  //   fragmentShader: cubeshader.fragmentShader,
+  //   vertexShader: cubeshader.vertexShader,
+  //   uniforms: cubeshader.uniforms,
+  //   depthWrite: false,
+  //   side: THREE.BackSide
+  // }),
+
+  // cubemesh = new THREE.Mesh(
+  //   new THREE.BoxGeometry( 1000, 1000, 1000 ), cubeMaterial
+  // );
+  // sceneCube.add(cubemesh);
+
+  var shader = THREE.ShaderLib[ "cube" ];
+  shader.uniforms[ "tCube" ].value = textureCube;
+
+  var material = new THREE.ShaderMaterial( {
+
+    fragmentShader: shader.fragmentShader,
+    vertexShader: shader.vertexShader,
+    uniforms: shader.uniforms,
+    depthWrite: false,
+    side: THREE.BackSide
+
+  } ),
+
+  cubemesh = new THREE.Mesh( new THREE.BoxGeometry( 100, 100, 100 ), material );
+  sceneCube.add( cubemesh );
 }
 
 // This is where our draw loop happens.
@@ -111,8 +178,11 @@ function animate() {
   mesh.rotation.x = Date.now() * 0.0005;
   mesh.rotation.y = Date.now() * 0.001;
 
-  // Render the scene.
-  renderer.render(scene, camera);
+  camera.lookAt( scene.position );
+  cameraCube.rotation.copy( camera.rotation );
+
+  renderer.render( sceneCube, cameraCube );
+  renderer.render( scene, camera );
 
 }
 
