@@ -34,7 +34,7 @@ function update() {
 window.onload = function() { 
 	//get file
 	var req = new XMLHttpRequest(); 
-	req.open("GET","flume.mp3",true);
+	req.open("GET","Hustle.mp3",true);
 	//the data will be loaded as an array buffer
 	req.responseType = "arraybuffer";
 	req.onload = function() {
