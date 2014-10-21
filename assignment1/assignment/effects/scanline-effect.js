@@ -36,7 +36,7 @@ ScanlineEffect.prototype = {
   draw: function() {
     var canvas = this.canvas;
     var thickness = this.controls.Thickness.value;
-    var scrollSpeed = this.controls.Scrollspeed.value;
+    // var scrollSpeed = this.controls.Scrollspeed.value;
     var lineWidth = MEDIA.width * 4;
 
     APP.drawImage(canvas);

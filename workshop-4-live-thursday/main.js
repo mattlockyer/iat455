@@ -38,7 +38,6 @@ function LipSwitchEffect() {
 
   var mask = new Image();
   mask.onload = function () {
-    self.maskCanvas.context.fill
     self.maskCanvas.context.drawImage(
       mask, 0, 0, width, height
     );
