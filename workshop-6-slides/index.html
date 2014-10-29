@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>reveal.js - The HTML Presentation Framework</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>Workshop 6</h1>
+					<h3>Digital Signal Processing (DSP) and Audio</h3>
+				</section>
+
+				<section>
+
+					<section>
+						<h2>What Sound Is</h2>
+						<p><img alt='waveform' src='img/waveform.png'></p>
+						<p><small>"Hold Me - Luigi Talluto"</small></p>
+						<ul>
+							<li class='fragment'>
+								A series of increase and decrease in air pressure, that our ears hear
+								<ul>
+									<li class='fragment'>(However, the differences need to occur in a certain window of time, otherwise we don't hear it. More on that later)</li>
+								</ul>
+							</li>
+							<li class='fragment'>The sound we hear is a result of series of <em>changes</em> in values. The wider the change between one value to the next, the louder it seems; the narrower, the quieter it seems</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>What Sound Is (Cont'd)</h2>
+						<p><img alt='Waveform zoomed-in' src='img/waveform-zoomed.png'></p>
+						<p>The waveform from earlier but zoomed in to a particular portion of the sound. That waveform probably represents 1/500<sup>th</sup> of a second</p>
+					</section>
+
+					<section>
+						<h2>Loudness</h2>
+						<ul>
+							<table>
+								<tr>
+									<td>
+										<img src='img/sin-x.png' alt='sin(x)'><br>
+										<audio controls>
+											<source src='audio/sine-wave-880hz--8dBFS.wav' type='audio/wav'>
+										</audio><br>
+										amplitude: 0.3981...
+									</td>
+									<td>
+										<img src='img/3sin-x.png' alt='sin(2x)'><br>
+										<audio controls>
+											<source src='audio/sine-wave-880hz--1dBFS.wav' type='audio/wav'>
+										</audio><br>
+										amplitude: 0.8912...
+									</td>
+								</tr>
+							</table>
+							<p class='fragment'><small>* Those graphs are not accurate. They just show different amplitudes</small></p>
+						</ul>
+					</section>
+
+					<section>
+						<h2>How we perceive loudness</h2>
+						<ul>
+							<li class='fragment'>humans perception of loudness is relative from one sound to the other</li>
+							<li class='fragment'>the difference needs to be exponential to be perceptible</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>What it takes for a person to say "hey it's louder!"</h2>
+						<p><img src='img/exponential.png'></p>
+					</section>
+
+					<section>
+						<h2>How we perceive loudness (cont'd)</h2>
+						<ul>
+							<li class='fragment'>we can either represent loudness as the range of a linear function (i.e. f(x) = mx + b, where m and b are constants and x is a variable)...</li>
+							<li class='fragment'>but better yet, we can represent loudness as the range of a logarithmic function (i.e. f(x) = A&times;log<sub>b</sub>(x/c), where A, b, and c are constants, and x is a variable)</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>How we perceive loudness (cont'd)</h2>
+						<ul>
+							<li class='fragment'>in signal processing, the logarithmic function used to represent "loudness" is known as the Decibel scale</li>
+							<li class='fragment'>there are many Decibel scales</li>
+							<li class='fragment'>
+								Example:
+								<ul>
+									<li class='fragment'>dBu: 0 dBu = 0.775 (personal stereo)<sup</li>
+									<li class='fragment'>dBV: 0 dBV = 1 (professional stage audio)</li>
+									<li class='fragment'>dBFS: 0 dBFS = 1 (digital audio)</li>
+								</ul>
+							</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>Visually interpreting loudness</h2>
+						<p><img src='img/equalizer.gif' alt='An equalizer'></p>
+						<p><small>http://fc03.deviantart.net/fs70/f/2010/006/9/c/Equalizer_by_dl33t.gif</small></p>
+					</section>
+
+					<section>
+						<h2>Visually interpreting loudness (cont'd)</h2>
+						<p>For some amplitude, <em>A</em>, of the given sound:</p>
+						<ul>
+							<li>dBu: v = 20 &times; log(|A|/0.775)</li>
+							<li>dBV: v = 20 &times; log(|A|)</li>
+							<li>dBFS: v = 20 &times; log(|A|)</li>
+							<li>(for A &ne; 0)</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>Amplifying or atenuating a signal</h2>
+						<ul>
+							<li class='fragment'>A&times;10<sup>v/20</sup></li>
+							<li class='fragment'>
+								Examples:
+								<ul>
+									<li class='fragment'>dBu: c = 0.775&times;10<sup>v/20</sup></li>
+									<li class='fragment'>dBV: c = 10<sup>v/20</sup></li>
+									<li class='fragment'>dBFS: c = 10<sup>v/20</sup></li>
+								</ul>
+							</li>
+						</ul>
+						<p class='fragment'>You take the resulting <em>c</em> and multiply it with the signal for amplification or atenuation</p>
+					</section>
+
+					<section>
+						<h2>Pro and Cons of using the logarithmic scale to represent loudness</h2>
+						<ul>
+							<li>
+								Pro
+								<ul>
+									<li class='fragment'>
+										Allows us to more easily scale loudness so that it's perceivable
+										<ul>
+											<li class='fragment'>Hence why it's used on most (if not, all) devices and software</li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+							<li>
+								Con
+								<ul>
+									<li class='fragment'>We will never reach true silence with this scale</li>
+									<li class='fragment'>Hard to even <em>represent</em> silence with this scale!</li>
+									<li class='fragment'>why? Well, log(x) is undefined for any values of x less than or equal to 0!</li>
+									<li class='fragment'>If you don't know what you're doing, a value in the Decibel scale doesn't make any sense</li>
+								</ul>
+							</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>The Decibel Scale (Approximation)</h2>
+						<p><img src='img/decibel-scale.png'></p>
+					</section>
+
+					<section>
+						<h2>The rate of change, and pitch</h2>
+						<table>
+							<tr>
+								<td>
+									<img src='img/sin-x.png' alt='sin(x)'><br>
+									<audio controls>
+										<source src='audio/sine-wave-440hz.wav' type='audio/wav'>
+									</audio><br>
+									440 Hz, -3 dBFS
+								</td>
+								<td>
+									<img src='img/sin-2x.png' alt='sin(2x)'><br>
+									<audio controls>
+										<source src='audio/sine-wave-880hz.wav' type='audio/wav'>
+									</audio><br>
+									880 Hz, -3 dBFS
+								</td>
+							</tr>
+						</table>
+					</section>
+
+					<section>
+						<h2>The rate of change, and pitch</h2>
+						<table>
+							<tr>
+								<td>
+									<img src='img/sin-x.png' alt='sin(x)'>
+								</td>
+								<td>
+									<img src='img/sin-2x.png' alt='sin(2x)'>
+								</td>
+							</tr>
+						</table>
+						<ul>
+							<li class='fragment'>The closer together the peaks and valleys the higher the pitch</li>
+							<li class='fragment'>The farther apart, the lower the pitch</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>The rate of change, and pitch</h2>
+						<ul>
+							<li class='fragment'>The pitch is closely related with "frequency" (however, formally, pitch is not measured in frequency. Pitch is a measure on its own)</li>
+							<li class='fragment'>The closer the peaks and valleys, the higher the frequency</li>
+							<li class='fragment'>Frequency is measured in Hertz (Hz)</li>
+							<li class='fragment'>Frequency determines how often a wave changes from the highest peak, to the lowest valley in a second</li>
+							<li class='fragment'>So 1 Hz represents a wave going from the highest peak to the lowest valley only once in one second</li>
+							<li class='fragment'>10 Hz represents a wave going from the highest peak to the lowest valley ten times in one second</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>Aside: the pitch and the human hearing</h2>
+						<ul>
+							<li class='fragment'>Humans can only hear sounds as low as 16 Hz, and as high as 20,000 Hz (20 kHz)</li>
+							<li class='fragment'>
+								Any sound not within that range is never heard
+								<ul>
+									<li class='fragment'>However, if loud enough, sounds below 16 Hz is often felt by the body</li>
+								</ul>
+							</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>Summary</h2>
+						<ul>
+							<li class='fragment'>Loudness: height of peaks and valleys, also known as amplitude</li>
+							<li class='fragment'>Pitch: the distance between peaks and valleys, also known as frequency</li>
+						</ul>
+					</section>
+
+				</section>
+
+				<section>
+					<section>
+						<h2>How multiple sound sources are added together</h2>
+						<ul>
+							<li class='fragment'>They're just summed together</li>
+							<li class='fragment'>
+								Three things may happen to certain parts of the wave
+								<ul>
+									<li class='fragment'>Get a higher amplitude by a facter of anything greater than 1 to a maximum of 2</li>
+									<li class='fragment'>Decrease in amplitude by a factor of anything in between 0 to 1 (not inclusive)</li>
+									<li class='fragment'>Cancel out entirely</li>
+								</ul>
+							</li>
+							<li class='fragment'>So, in your applications, if you have more than one sound source, just add them up</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>Application in the real world</h2>
+						<h3>Noise cancelling headphones</h3>
+						<p><img src='img/noise-cancelling-headphone.jpg' alt='Noise Cancelling Headphones'></p>
+						<p>Outputs the audio with amplitudes flipped</p>
+					</section>
+				</section>
+
+				<section>
+
+					<section>
+						<h2>What sound is in computer systems</h2>
+						<table>
+							<tr>
+								<td>
+									<img src='img/wave-analog.gif' alt='An analog waveform'>
+									<br>
+									<small>http://www.alsa-project.org/alsa-doc/alsa-lib/wave1.gif</small>
+									<br>
+									A sketch of an analog waveform
+								</td>
+								<td>
+									<img src='img/wave-pcm.gif' alt='A digital waveform'>
+									<br>
+									<small>http://www.alsa-project.org/alsa-doc/alsa-lib/wave2.gif</small>
+									<br>
+									A sketch of a digital waveform
+								</td>
+							</tr>
+						</table>
+					</section>
+
+					<section>
+						<h2>What Sound is in computer systems (cont'd)</h2>
+						<ul>
+							<li class='fragment'>when it comes to DSP, computer systems don't work with continuous streams</li>
+							<li class='fragment'>They work with finite and discrete set of ordered numbers (e.g. numbers stored in arrays)</li>
+							<li class='fragment'>These sets are formally called point-code modulation (PCM)</li>
+							<li class='fragment'>Elements inside PCM are called "samples"</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>What Sound is in computer systems (cont'd)</h2>
+						<ul>
+							<li class='fragment'>
+								in modern day computers, one second of audio is popularly encoded in 44100 samples
+								<ul>
+									<li>However, a second of audio can be encoded in less or more samples, if preferred</li>
+								</ul>
+							</li>
+							<li class='fragment'>That 44100 samples per second number is more formally called the "samplerate"</li>
+							<li class='fragment'>
+								The unit for samplerate is Hertz (Hz)
+								<ul>
+									<li class='fragment'>As far as samples is concerned, Hertz is the unit of measure of how many things happen in a second</li>
+								</ul>
+							</li>
+							<li class='fragment'>(If some audio data has a samplerate of x, how long does a single sample last?)</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>What sound is in computer systems (cont'd)</h2>
+						<ul>
+							<li class='fragment'>to mimic audio localization, more than one audio sources can be recorded and played back</li>
+							<li class='fragment'>when more than one set of PCM data is available for playback, these sets are called "channels"</li>
+							<li class='fragment'>
+								commonly, most digital audio sources are encoded to have two channels
+								<ul class='fragment'>
+									<li>one to be played back by a "left" speaker</li>
+									<li>the other to be played by a "right" speaker</li>
+								</ul>
+							</li>
+							<li class='fragment'>some can have five channels (such as Dolby Surround sound): one for front-left, front-right, back-left, back-right, and centre</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>What Sound is in computer systems (cont'd)</h2>
+						<ul>
+							<li class='fragment'>
+								PCM data can be stored as raw data (WAV)
+								<ul>
+									<li class='fragment'>In a&mdash;for example&mdash;WAV file, if more than one PCM data set is available for more channels, the header data must indicate that there is more than one set of data available</li>
+								</ul>
+							</li>
+							<li class='fragment'>
+								PCM data can be stored losslessly compressed (ALAC, FLAC)
+								<ul>
+									<li class='fragment'>Again, headers must indicate the number of PCM data that is available</li>
+								</ul>
+							</li>
+							<li class='fragment'>
+								PCM data can also be lossily compressed (Ogg Vorbis, AAC, MP3)
+								<ul>
+									<li class='fragment'>Again, headers must indicate the number of PCM data that is available</li>
+								</ul>
+							</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>What sound is in computer systems (cont'd)</h2>
+						<p><img src='img/wav-format.gif' alt='WAV format header'></p>
+						<p><small>https://ccrma.stanford.edu/courses/422/projects/WaveFormat/wav-sound-format.gif</small></p>
+					</section>
+
+					<section>
+						<h2>What sound is in computer systems (cont'd)</h2>
+						<ul>
+							<li class='fragment'>Although, not always, but some software systems prefer working with powers of 2 chunks of PCM data at the time</li>
+							<li class='fragment'>Allows for better analysis (spectral analysis) of PCM data</li>
+							<li class='fragment'>The larger these chunks, the better our analysis and modification, however, it is much slower to parse</li>
+							<li class='fragment'>The smaller these chunks, the worse our analysis and modification, however, it is much faster to parse</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>What sound is in computer systems (cont'd)</h2>
+						<p>An example in JavaScript</p>
+						<pre><code class='javascript' data-trim>
+var context = new AudioContext();
+var processor = context.createScriptProcessor(
+  // Chunk (buffer) size.
+  512,
+  // Number of input channels
+  1,
+  // Number of output channels
+  2
+);
+processor.onaudioprocess = function (e) {
+  var L = e.outputBuffer.getChannelData(0);
+  var R = e.outputBuffer.getChannelData(1);
+  // L and R are both mutable arrays of numbers. Do stuff with them.
+}
+						</code></pre>
+					</section>
+
+				</section>
+
+				<section>
+					<section>
+						<h2>What Sound is (A Theoretical approach)</h2>
+						<p class='fragment'>Fourier's theorem: a wave form is the sum of <em>many</em> sine waves, each with different periods (a.k.a. frequencies), phases and amplitudes</p>
+						<p class='fragment'>These sine waves are also often called "harmonics"</p>
+					</section>
+
+					<section>
+						<h2>Review: A Sine Wave</h2>
+						<p><img src='img/sinewave.png'></p>
+						<p><small>http://upload.wikimedia.org/wikipedia/commons/6/64/Wavelength.png</small></p>
+						<ul>
+							<li class='fragment'>
+								The sine wave is generated by the sine function (often abbreviated to <code>sin</code>)
+								<ul>
+									<li class='fragment'>drawing the sine wave on a graph is simply <br><code>for (var x = 0; x &lt; someLargeValue; x++) { y = sin(x); }</code></li>
+								</ul>
+							</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>Review: A Sine Wave (cont'd)</h2>
+						<p><img src='img/sine-drawing.gif' alt='Drawing the sine wave'></p>
+						<p><small>http://media.giphy.com/media/NKLdcqhwo2f8A/giphy.gif</small></p>
+						<ul>
+							<li class='fragment'>The sine function's input (domain) is a rotation value, which we normalize to 2π</li>
+							<li class='fragment'>The sine function's output (range) represents the vertical (often called y) coordinate when drawing a circle at a particular angle (where that circle's centre is located at the origin (0,0))</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>Review: A Sine Wave (cont'd)</h2>
+						<table>
+							<tr>
+								<td><img src='img/sin-x.png'><br>sin(x)</td>
+								<td><img src='img/0.5sin-x.png'><br>0.5sin(x)</td>
+								<td><img src='img/3sin-x.png'><br>3sin(x)</td>
+								<td><img src='img/-sin-x.png'><br>-sin(x)</td>
+							</tr>
+						</table>
+						<ul>
+							<li class='fragment'>Increasing the coefficient (greater than 1) on the sine function's output results in results in larger amplitudes</li>
+							<li class='fragment'>Clamping the coefficient to anywhere between 0 and 1 (not inclusive) on the sine function's output results in smaller amplitudes</li>
+							<li class='fragment'>Negating the output results in an inverted output</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>Review: A Sine Wave (cont'd)</h2>
+						<table>
+							<tr>
+								<td><img src='img/sin-x.png' alt='sin(x)'><br>sin(x)</td>
+								<td><img src='img/sin-2x.png' alt='sin(2x)'><br>sin(2x)</td>
+								<td><img src='img/sin--x.png' alt='sin(-x)'><br>sin(-x)</td>
+							</tr>
+						</table>
+						<ul>
+							<li class='fragment'>Increasing the coefficient on the sine function's input results in shorter periods (higher frequencies)</li>
+							<li class='fragment'>Clamping the coefficient to anywhere between 0 and 1 (not inclusive) on the sine function's input results in longer periods (lower frequencies)</li>
+							<li class='fragment'>Negating the output result in the output going the other way</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>Review: A Sine Wave (cont'd)</h2>
+						<table>
+							<tr>
+								<td><img src='img/sin-x.png' alt='sin(x)'><br>sin(x)</td></td>
+								<td><img src='img/sin-x+1.png' alt='sin(x + 1)'><br>sin(x - 1)</td></td>
+								<td><img src='img/sin-x+2.png' alt='sin(x + 2)'><br>sin(x + 1)</td></td>
+							</tr>
+						</table>
+						<ul>
+							<li class='fragment'>adding by a constant results in a translation of the sine wave by that constant's amount towards the left</li>
+							<li class='fragment'>conversely, subtracting by a constant results in a translation of the sine wave by that constant's amount towards the right</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>A simple square wave</h2>
+						<p style='background-color: white'><img src='img/square-wave.gif' alt='Square wave'></p>
+						<p><small>http://mathworld.wolfram.com/images/eps-gif/SquareWave_700.gif</small></p>
+						<audio controls>
+							<source src='audio/square-wave.wav' type='audio/wav'>
+						</audio>
+						<p><small>http://www.audiocheck.net/download.php?filename=Audio/audiocheck.net_sqr_1000Hz_-3dBFS_3s.wav</small></p>
+					</section>
+
+					<section>
+						<h2>A simple square wave (cont'd)</h2>
+						<p>Recall, fourier's theorem: a wave is a sum of its sine waves</p>
+						<p><small>http://i.stack.imgur.com/6yngK.gif</small></p>
+						<p><img src='img/square-wave-harmonics.gif' alt='The harmonics'></p>
+					</section>
+
+					<section>
+						<h2>A simple square wave (cont'd)</h2>
+						<p><small>http://i.stack.imgur.com/JhZnq.png</small></p>
+						<p><img src='img/square-together.png' alt='The harmonics all in the same graph'></p>
+						<p><small>Note: the green line represents the sum of the waves. All others represents the harmonics</small></p>
+					</section>
+
+					<section>
+						<h2>A simple square wave (cont'd)</h2>
+						<p><small>http://upload.wikimedia.org/wikipedia/commons/0/0a/Synthesis_square.gif</small></p>
+						<p><img src='img/square-wave-fourier.gif' alt='Square wave animation'></p>
+					</section>
+
+					<section>
+						<h2>Another example: the sawtooth wave</h2>
+						<p><small>http://upload.wikimedia.org/wikipedia/commons/d/d4/Synthesis_sawtooth.gif</small></p>
+						<p><img src='img/sawtooth-wave.gif' alt='Sawtooth wave animation'></p>
+						<audio controls>
+							<source src='audio/sawtooth-wave.wav' type='audio/wav'>
+						</audio>
+						<p><small>http://www.audiocheck.net/download.php?filename=Audio/audiocheck.net_saw_1000Hz_-3dBFS_3s.wav</small></p>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Digitally Extracting Harmonics from waves</h2>
+						<p style='background: white'><img src='img/square-wave.gif' alt='Square Wave'></p>
+						<p><img src='img/square-wave-harmonics.jpg' alt='Square Wave'></p>
+					</section>
+
+					<section>
+						<h2>Extracting Harmonics from waves</h2>
+						<p>Discrete Fourier Transform (DFT)</p>
+						<p style='background-color: white'><img src='img/dft-equation.png' alt='Discrete Fourier Transform Equation'></p>
+						<p><small>http://nayuki.eigenstate.org/res/how-to-implement-the-discrete-fourier-transform/dft.js</small></p>
+						<pre><code class='javascript' data-trim>
+var n = pcm.length;
+var out = new Array(n);
+for (var k = 0; k &lt; n; k++) {  // For each output element
+  var sumreal = 0;
+  var sumimag = 0;
+  for (var t = 0; t &lt; n; t++) {  // For each input element
+      var angle = 2 * Math.PI * t * k / n;
+      sumreal += inreal[t] * Math.cos(angle);
+      sumimag += inreal[t] * Math.sin(angle);
+  }
+  out[k] = {
+    real: sumreal,
+    imaginary: sumimag
+  };
+}
+						</code></pre>
+						<p><small><strong>The above algorithm is a proof of concept only. It should never be used for real-time DSP! (For anything that isn't real-time is fine.) Use a library that implements a fast Fourier transform (FFT), instead</strong></small></p>
+					</section>
+
+					<section>
+						<h2>Extracting Harmonics (cont'd)</h2>
+						<ul>
+							<li class='fragment'>the DFT outputs a set of complex numbers</li>
+							<li class='fragment'>
+								each element of the set encodes two values
+								<ul>
+									<li class='fragment'>the amplitude</li>
+									<li class='fragment'>the phase</li>
+								</ul>
+							</li>
+							<li class='fragment'>Don't be fooled by the JavaScript code. Although each element of the <code>out</code> array has two properties, they're actually related. They're in two properties because JavaScript lacks a "complex number" primitive
+						</ul>
+					</section>
+
+					<section>
+						<h2>Extracting the amplitude</h2>
+						<p style='background-color: white'><img src='img/dft-amplitudes.png' alt='The amplitudes'></p>
+						<pre><code class='javascript' data-trim>
+var amps = new Array(n);
+for (var k = 0; k &lt; n; k++) {
+  var real = out[k].real;
+  var imaginary = out[k].imaginary;
+  amps[k] = Math.sqrt(real*real + imaginary*imaginary)/n;
+}
+						</code></pre>
+					</section>
+
+					<section>
+						<h2>Extracting the phases</h2>
+						<p style='background-color: white'><img src='img/dft-phases.png' alt='The phases'></p>
+						<pre><code class='javascript' data-trim>
+var phases = new Array(n);
+for (var k = 0; k &lt; n; k++) {
+  phases[k] = Math.atan2(out[k].imaginary, out[k].real);
+}
+						</code></pre>
+					</section>
+
+					<section>
+						<h2>Reconstructing the original wave (almost)</h2>
+						<pre><code class='javascript' data-trim>
+var pcm = new Array(n);
+for (var k = 0; k &lt; n; k++) {
+  pcm[k] = 0;
+  for (var j = 0; j &lt; n; j++) {
+    pcm[k] += Math.sin(2 * Math.PI * k/sampleRate + phases[j]) * amps[j];
+  }
+}
+						</code></pre>
+						<p class='fragment'><small><strong>Never use the above algorithm in any real-time DSP applications!</strong></small></p>
+					</section>
+				</section>
+
+				<section>
+					<h2>Applications of DFT (and FFT)</h2>
+					<ul>
+						<li class='fragment'>changing pitch of certain sounds</li>
+						<li class='fragment'>extract specific features of audio, such as voice or instrumental</li>
+						<li class='fragment'>extract melodies of leads of musical tracks</li>
+						<li class='fragment'>applying effects to electronic music</li>
+						<li class='fragment'>mimicking localization on stereo audio</li>
+						<li class='fragment'>extracting spectral information for equalizer information</li>
+						<li class='fragment'>studying ambient noise</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Applying everything (Web Audio API)</h2>
+					<pre><code class='javascript' data-trim>
+var SAMPLES_BUFFER_SIZE = 128; // Can be any powers of 2.
+var buffer = new Uint8Array(SAMPLES_BUFFER_SIZE);
+
+var audioContext = new AudioContext();
+
+var fft = audioContext.createAnalyser();
+fft.fftSize = SAMPLES_BUFFER_SIZE;
+
+// We'll initialize some audio source, and call it `src`
+
+// There you have it, we are now performing frequency analysis on the audio.
+src.connect(fft);
+
+fft.getByteFrequencyData(buffer);
+
+// `buffer` should now be populated with frequency domain data, with the ranges
+// representing amplitudes in a logarithmic scale.
+					</code></pre>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
