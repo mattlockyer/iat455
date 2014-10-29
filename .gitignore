@@ -1,3 +1,4 @@
 *.sublime-project
 *.sublime-workspace
 assignments/
+.DS_Store
