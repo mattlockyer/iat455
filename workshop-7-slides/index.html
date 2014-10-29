@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+
+    <title>reveal.js - The HTML Presentation Framework</title>
+
+    <meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+    <meta name="author" content="Hakim El Hattab">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="css/reveal.min.css">
+    <link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+    <script>
+      if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+      }
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="reveal">
+
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+        <section>
+          <h1>Workshop 7</h1>
+          <h3>Audio Synthesis</h3>
+        </section>
+
+        <section>
+          <h2>Music Theory Primer</h2>
+          <ul>
+            <li class='fragment'>In Workshop 6, I mentioned that although pitch and frequency are closely related, a higher frequency does not imply a higher pitch (at least not a noticeably higher pitch)</li>
+            <li class='fragment'>This is because, like loudness (volume), pitch is a logarithmic scale</li>
+            <li class='fragment'>In fact, like loudness, the sound of one pitch is relative to the other</li>
+            <li class='fragment'>Pitch, for the large part is a discrete scale</li>
+            <li class='fragment'>Each element in the scale is called an semitone</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Music Theory Primer</h2>
+          <ul>
+            <li class='fragment'>Western music, today, is clamped to 12 semitones</li>
+            <li class='fragment'>
+              If, after counting from note 0 to 11, we hit the 12th tone, then, we are looking at a different octave. We are now hearing note 0 of octave 1
+              <ul>
+                <li class='fragment'>Not getting into the details, but the use of 12 semitones was for practical reasons; may or may not be for aesthetic reasons</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Music Theory Primer</h2>
+          <ul>
+            <li class='fragment'>Although unintuitive, pitch is denoted in either of the following notations:
+            </li>
+          </ul>
+
+          <table class='fragment'>
+            <tr>
+              <td>Do</td><td>Re</td><td>Mi</td><td>Fa</td><td>Sol</td><td>La</td><td>Si/Ti</td><td>Do</td>
+            </tr>
+            <tr>
+              <td>C</td><td>D</td><td>E</td><td>F</td><td>G</td><td>A</td><td>B</td><td>C</td>
+            </tr>
+            <tr>
+              <td>0</td><td>2</td><td>4</td><td>5</td><td>7</td><td>9</td><td>11</td><td>12</td>
+            </tr>
+          </table>
+
+          <ul>
+            <li class='fragment'>Do note that we are omitting several semitones in the above notations</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Music Theory Primer</h2>
+          <p><img src='img/keyboard.jpg'></p>
+          <p><small>http://www.orgellexikon.gally.ch/grafiken/klaviatur.jpg</small></p>
+          <ul>
+            <li class='fragment'>In the last slide, you saw that we omitted a few semitones</li>
+            <li class='fragment'>In the keyboard you see above, the white keys represents the semitones that we explicitly mentioned (at least in the letter notation)</li>
+            <li class='fragment'>Working from the 0th octave, the left-most key represents "Doh"/"C" (0)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Music Theory Primer</h2>
+          <p><img src='img/keyboard.jpg'></p>
+          <p><small>http://www.orgellexikon.gally.ch/grafiken/klaviatur.jpg</small></p>
+          <ul>
+            <li class='fragment'>
+              The black keys represents the "sharps" or "flats" of those semitones
+              <ul>
+                <li class='fragment'>
+                  Sharps are denoted by "#"
+                  <ul>
+                    <li class='fragment'>A sharp is a semitone above a particular semitone</li>
+                  </ul>
+                </li>
+                <li class='fragment'>
+                  Flats are denoted by "♭"
+                  <ul>
+                    <li class='fragment'>A flat is a semitone below a particular semitone</li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li class='fragment'>In order to notationally represent those missing semitones, we take the one above or below, and append either a "#" or a "♭" (e.g. C#, or B♭)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Music Theory Primer</h2>
+          <p><img src='img/keyboard.jpg'></p>
+          <p><small>http://www.orgellexikon.gally.ch/grafiken/klaviatur.jpg</small></p>
+          <ul>
+            <li class='fragment'>To go further, for stylistic reasons, music can be clamped to a particular scale</li>
+            <li class='fragment'>When composing a tune using nothing but the white keys (e.g. C, D, E, F, G, A, B, C), we are composing a tune in the <strong>C major scale</strong></li>
+            <li class='fragment'>We are not required to constrain ourselves to the C major scale (the white keys), we can try others</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Music Theory Primer</h2>
+          <p>C Major Scale</p>
+          <p>C D E F G A B C</p>
+          <p>
+            <audio controls>
+              <source src='audio/c_major.wav' type='audio/wav'>
+            </audio>
+          </p>
+        </section>
+
+        <section>
+          <h2>Music Theory Primer</h2>
+          <p>C Minor Scale</p>
+          <p>C D E♭ F G A♭ B♭ C</p>
+          <p>
+            <audio controls>
+              <source src='audio/c_minor.wav' type='audio/wav'>
+            </audio>
+          </p>
+        </section>
+
+        <section>
+          <h2>Music Theory Primer</h2>
+          <p>C Minor Scale</p>
+          <p>C D E♭ F G A♭ B C</p>
+          <p>
+            <audio controls>
+              <source src='audio/c_harmonic_minor.wav' type='audio/wav'>
+            </audio>
+          </p>
+        </section>
+
+        <section>
+          <h2>Music Theory Primer</h2>
+          <p>C Minor Blues Scale</p>
+          <p>C E♭ F G♭ G B♭ C</p>
+          <p>
+            <audio controls>
+              <source src='audio/c_minor_blues_scale.wav' type='audio/wav'>
+            </audio>
+          </p>
+        </section>
+
+        <section>
+          <h2>Music Theory Primer</h2>
+          <p>A Major</p>
+          <p>A B C# D E F# G# A</p>
+          <p>
+            <audio controls>
+              <source src='audio/a_major.wav' type='audio/wav'>
+            </audio>
+          </p>
+        </section>
+
+        <section>
+          <h2>Music Synthesis</h2>
+          <p>Sine Synth</p>
+          <ul>
+            <li class='fragment'>To synthesize music, we will first need to get the musical semitone, and then derive a "period" of our synth</li>
+            <li class='fragment'>
+              For the period, it's this:
+              <ul>
+                <li class='fragment'>
+                  <em>b</em>&times;2<sup><em>s</em></sup>
+                  <ul>
+                    <li class='fragment'>
+                      <em>b</em> is our base frequency
+                      <ul>
+                        <li class='fragment'>Typically, it's set to 440 (typically, A of octave 4)</li>
+                      </ul>
+                    </li>
+                    <li class='fragment'>
+                      <em>s</em> is an integer variable
+                      <ul>
+                        <li class='fragment'><em>s</em> can also be summed with a constant integer term (typically 12 &times; 4 = 48)</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Music Synthesis</h2>
+          <ul>
+            <li class='fragment'>
+              We can think of a synth as a function that accepts two parameters, <em>s</em> and <em>t</em>, and which returns a number
+              <ul>
+                <li class='fragment'>
+                  That number represents an amplitude
+                </li>
+              </ul>
+            </li>
+            <li class='fragment'>Our synth is a periodic function (e.g. -<em>c</em> &leq; <em>f</em>(<em>s</em>, <em>t</em>) &leq; <em>c</em>)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Music Synthesis</h2>
+          <p>Sine synth</p>
+<pre><code data-trim class='javascript'>
+function synth(s, t) {
+  return Math.sin(440 * Math.pow(2, s) * t);
+}
+</code></pre>
+        </section>
+
+        <section>
+          <h2>Music Synthesis</h2>
+          <p>Sawtooth synth</p>
+<pre><code data-trim class='javascript'>
+function synth(s, t) {
+  // Assuming we are working with CD quality.
+  var input = (440 * Math.pow(2, s) * t)/44100;
+  return input - Math.floor(input);
+}
+</code></pre>
+        </section>
+
+        <section>
+          <h2>Music Synthesis</h2>
+          <p>ADSR envelope</p>
+          <ul>
+            <li class='fragment'>The synths in the last few slides are only intended to output amplitude</li>
+            <li class='fragment'>What we get is audio that is abruptly cut, but there isn't any smooth transition</li>
+            <li class='fragment'>the ADSR envolope is intended to apply that smooth transition from maximum amplitude, to entire silence</li>
+            <li class='fragment'>Think about how an accoustic piano sounds</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Music Synthesis</h2>
+          <p>ADSR envelope</p>
+          <ul>
+            <li class='fragment'>Attack: the time in which to increase the volume to the max, as a note is being played</li>
+            <li class='fragment'>Decay: the time in which to decrease the value to the sustain level, after the max</li>
+            <li class='fragment'>Sustain: the level to <em>decay to</em></li>
+            <li class='fragment'>Release: the time it takes to go entirely silent after releasing the key</li>
+          </ul>
+          <p class='fragment'>These are not set in stone</p>
+        </section>
+
+        <section>
+          <h2>Effects Composition</h2>
+          <p><img src='img/modules.png' alt='Modules'></p>
+        </section>
+
+        <section>
+          <h2>Effects Composition</h2>
+          <p>Effects composition is modular</p>
+        </section>
+
+        <section>
+          <h2>Effects</h2>
+          <ul>
+            <li class='fragment'>Gain: outputs a decibel scaling of an input audio</li>
+            <li class='fragment'>Cutoff: outputs audio that either cuts out particular frequencies, or applies an effect that gives the illusion where specific frequencies were cut out</li>
+            <li class='fragment'>Delay: outputs the input audio as is, as well as buffer the input. However, after a given time, it will pop out a buffered sample, scale it down, and sum it with the input sample before outputing it; will then buffer the result. Intended to mimic echo</li>
+            <li class='fragment'>Reverb: tries to mimic echo. Except, unlike delay, it actually tries to mimic the distortion that occurs when a sound is echoed back
+              <ul>
+                <li class='fragment'>Convolution is one way to do it. This is called a "convolution reverb"</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Effects Composition in Web Audio API</h2>
+          <pre><code data-trim class='javascript'>
+var input = someActualAudioTrack()
+var lowpass = audioContext.createBiquadFilter();
+lowpass.type = 'lowpass';
+lowpass.frequency.value = 100;
+lowpass.gain.value = 0;
+var delay = someDelayConstructor();
+var reverb = someReverbConstructor();
+
+input.connect(lowpass);
+lowpass.connect(delay);
+lowpass.connect(reverb);
+          </code></pre>
+        </section>
+
+      </div>
+
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.min.js"></script>
+
+    <script>
+
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+        transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+        // Parallax scrolling
+        // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+        // parallaxBackgroundSize: '2100px 900px',
+
+        // Optional libraries used to extend on reveal.js
+        dependencies: [
+          { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+          { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+        ]
+      });
+
+    </script>
+
+  </body>
+</html>
