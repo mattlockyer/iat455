@@ -1,0 +1,26 @@
+<!doctype html>
+
+<html lang='en'>
+  <head>
+    <meta charset='utf-8'>
+    <title>Cutoff example</title>
+  </head>
+  <body>
+    <input type='text' class='dial' value='100' data-min='0' data-max='100' data-angleOffset=-125 data-angleArc=250>
+    <script src='complex_array.js'></script>
+    <script src='fft.js'></script>
+    <script src='jquery-2.1.1.min.js'></script>
+    <script src='jquery.knob.min.js'></script>
+    <script>
+    window.knobValue = 100
+    $(function () {
+      $('.dial').knob({
+        change: function (value) {
+          window.knobValue = value
+        }
+      })
+    })
+    </script>
+    <script src='script.js'></script>
+  </body>
+</html>
