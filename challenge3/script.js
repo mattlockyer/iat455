@@ -53,23 +53,33 @@ lpfilter.onaudioprocess = function (e) {
   // harmonics data.
   data.FFT()
 
+  var offset = 1;
+
   // Now, loop through each complex number, and cut out all the frequencies that
   // are the value indicated by our knob.
   data.map(function (value, i, n) {
 
     // **This is where you had to fill in the blank**
 
-    if (((i+1)/n)*100 > window.knobValue) {
-      // If we are to look back at the original algorithm on how to extract
-      // amplitudes, we see that we are applying pythagorean theorem.
-      //
-      // And so, by pythagorean theorem, if all terms inside the square root
-      // is 0, then the entire square root is 0.
-      //
-      // And so, set the real term and the coefficient of the imaginary term
-      // to 0, and the amplitude will thus result in 0.
-      value.real *= 0
-      value.imag *= 0
+    // if (((i+1)/n)*100 > window.knobValue) {
+    //   // If we are to look back at the original algorithm on how to extract
+    //   // amplitudes, we see that we are applying pythagorean theorem.
+    //   //
+    //   // And so, by pythagorean theorem, if all terms inside the square root
+    //   // is 0, then the entire square root is 0.
+    //   //
+    //   // And so, set the real term and the coefficient of the imaginary term
+    //   // to 0, and the amplitude will thus result in 0.
+    //   value.real *= 0
+    //   value.imag *= 0
+    // }
+
+    if (i < n - offset) {
+      value.real = data.real[i + offset]
+      value.imag = data.imag[i + offset]
+    } else {
+      value.real = 0
+      value.real = 0
     }
   })
 
