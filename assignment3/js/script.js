@@ -1,5 +1,5 @@
 var SAMPLES = 128;
-var SAMPLES_TO_READ = Math.floor( SAMPLES / 3 - SAMPLES / 15 );
+var SAMPLES_TO_READ = Math.floor( SAMPLES / 2 );
 var BALLS = 10;
 
 var renderer;
