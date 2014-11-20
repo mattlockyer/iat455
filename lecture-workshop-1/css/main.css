@@ -1,0 +1,15 @@
+
+
+body {
+	margin:32px;
+	padding:0px;
+}
+
+.video {
+	display:none;
+}
+
+.canvas {
+	display:none;
+}
+
