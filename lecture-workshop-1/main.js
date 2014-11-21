@@ -9,7 +9,8 @@ APP.init = function() {
 	APP.setup({w:320, h:240});
 	//add effects
 	APP.effects = [];
-	APP.effects.push(new AnalysisEffect());
+	APP.effects.push(new AnalysisDiff());
+	APP.effects.push(new AnalysisMotionDetect());
 	APP.setupControls();
 };
 

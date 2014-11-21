@@ -3,7 +3,7 @@
 
 "use strict";
 
-var AnalysisEffect = function() {
+var AnalysisDiff = function() {
 	var self = this;
 	//parameters
 	self.w = 16, self.h = 12,
@@ -27,7 +27,7 @@ var AnalysisEffect = function() {
 	self.pct = 0; //prev capture time
 	self.prevPix = null;
 	//controls
-	self.name = 'Analysis';
+	self.name = 'Analysis Difference';
 	self.controls = {
 		Threshold:{
 			value:50,
@@ -41,7 +41,7 @@ var AnalysisEffect = function() {
 	};
 };
 
-AnalysisEffect.prototype = {
+AnalysisDiff.prototype = {
 	draw: function() {
 		APP.drawImage(this.canvas);
 
@@ -94,7 +94,6 @@ AnalysisEffect.prototype = {
 
 		if (Date.now() - self.pct > 250) {
 			self.prevPix = srcPix;
-			console.log('new prevPix');
 			self.pct = Date.now();
 		}
 	}
